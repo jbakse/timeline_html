@@ -53,9 +53,10 @@ function Track(timeline) {
 	this._timeline._element.append(this._element);
 	
 	this._keyFrames = [];
-	for (var i = 0; i < 3; i++) {
+	var num = Math.random()*15;
+	for (var i = 0; i < num; i++) {
 		var k = new KeyFrame(this);
-		k.setTime(i);
+		k.setTime(Math.random()*40);
 		this._keyFrames.push(k);
 	}
 }
@@ -98,7 +99,7 @@ KeyFrame.prototype.mousedown = function(e) {
 
 	var mouseX = e.pageX - this._element.parent().position().left;
 	this.dragOffsetX = mouseX - this._element.position().left;
-
+	this._element.parent().append(this._element);
 	this._mousemoveHandler = this.mousemove.bind(this);
 	$(window).mousemove(this._mousemoveHandler);
 
