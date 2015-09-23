@@ -51,6 +51,7 @@ function Track(timeline) {
 
 	this._element = $('<div class="track"></div>');
 	this._timeline._element.append(this._element);
+	this._element.before( $('<div class="label">Track X</div>') );
 	
 	this._keyFrames = [];
 	var num = Math.random()*15;
@@ -63,7 +64,6 @@ function Track(timeline) {
 
 
 Track.prototype.draw = function() {
-	console.log("draw track", this);
 	this._element.width(this._timeline._duration * this._timeline._scale);
 	this._keyFrames.forEach( function(k) {
 		k.draw();
@@ -90,7 +90,6 @@ KeyFrame.prototype.setTime = function(time) {
 };
 
 KeyFrame.prototype.draw = function() {
-	console.log("draw key frame");
 	this._element.css("left", this._time * this._track._timeline._scale + "px");
 };
 
