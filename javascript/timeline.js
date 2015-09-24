@@ -15,11 +15,18 @@ export function Timeline(element) {
 	this._scale = 100;
 	
 	this._tracks = [];
-	for (var i = 0; i < 5; i++) {
+	for (var i = 0; i < 30; i++) {
 		this._tracks.push(new Track(this));
 	}
 
 	this.draw();
+
+	this._element.find(".track-scroll").scroll( (e) => {
+
+		this._element.find(".track-labels").scrollTop(this._element.find(".track-scroll").scrollTop());
+		this._element.find(".ruler").scrollLeft(this._element.find(".track-scroll").scrollLeft());
+
+	});
 }
 
 Timeline.prototype.setScale = function(scale) {
@@ -43,6 +50,7 @@ function Track(timeline) {
 	this._timeline._element.find(".track-scroll").append(this._element);
 
 	this._labelElement = $('<div class="track-label"></div>');
+	this._labelElement.text("hi");
 	this._timeline._element.find(".track-labels").append(this._labelElement);
 	// this._element.before( $('<div class="label">Track X</div>') );
 	
@@ -63,7 +71,7 @@ Track.prototype.draw = function() {
 };
 
 function KeyFrame(track) {
-	console.log("Construct Keyframe");
+	// console.log("Construct Keyframe");
 
 	this._track = track;
 

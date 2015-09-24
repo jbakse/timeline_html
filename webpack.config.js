@@ -6,7 +6,7 @@ module.exports = {
     },
     module: {
         loaders: [
-            { test: /\.scss$/, loader: "style!css!sass" },
+            { test: /\.scss$/, loader: "style!css!autoprefixer-loader!sass" },
             { test: /\.css$/, loader: "style!css" },
             { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader"}
         ]
