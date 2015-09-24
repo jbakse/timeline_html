@@ -23,7 +23,7 @@ body
 	height: 40px;
 }
 
-.ruler
+.ruler-scroll
 {
 	height: 40px;
 	background: #222;
@@ -32,20 +32,17 @@ body
 	position: relative;
 }
 
-.ruler:after
+.ruler 
 {
-	
+	height:$track-height;
+	margin-bottom: $track-margin;
+	width: 2000px;
+	background: #559;	
+	position: relative;
 
-	display: block;
-	position: absolute;
-
-	top: 0;
-	left: 0;
-	width: 10000px;
-	height: 10px;
-	border: 1px solid red;
-	content: "hi";
 }
+
+
 .track-labels
 {
 	float: left;

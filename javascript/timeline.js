@@ -3,6 +3,8 @@ export function Timeline(element) {
 	this._element = $(element);
 	this._slider = $('<input type="range" value="100" min="10" max="100">');
 
+	
+
 	var that = this;
 	this._slider.on("input", function() {
 		that.setScale($(this).val());
@@ -19,13 +21,14 @@ export function Timeline(element) {
 		this._tracks.push(new Track(this));
 	}
 
+	this._ruler = new Ruler(this);
+
+
 	this.draw();
 
 	this._element.find(".track-scroll").scroll( (e) => {
-
 		this._element.find(".track-labels").scrollTop(this._element.find(".track-scroll").scrollTop());
-		this._element.find(".ruler").scrollLeft(this._element.find(".track-scroll").scrollLeft());
-
+		this._element.find(".ruler-scroll").scrollLeft(this._element.find(".track-scroll").scrollLeft());
 	});
 }
 
@@ -35,11 +38,28 @@ Timeline.prototype.setScale = function(scale) {
 };
 
 Timeline.prototype.draw = function() {
-	
+	this._ruler.draw();
+
 	this._tracks.forEach( function(t) {
 		t.draw();
 	});
 };
+
+function Ruler(timeline) {
+	this._timeline = timeline;
+
+	this._element = $('<div class="ruler"></div>');
+	this._timeline._element.find(".ruler-scroll").append(this._element);
+}
+
+Ruler.prototype.draw = function() {
+	this._element.width(this._timeline._duration * this._timeline._scale);
+	this._element.text("This is some text");
+	// this._keyFrames.forEach( function(k) {
+	// 	k.draw();
+	// });
+};
+
 
 function Track(timeline) {
 	console.log("Construct Track");
