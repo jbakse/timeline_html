@@ -1,0 +1,68 @@
+$track-height: 20px;
+$track-margin: 2px;
+$key-frame-width: 8px;
+body
+{
+	margin: 0;
+}
+
+.timeline
+{
+	background: black;
+	width: 100%;
+	height: 400px;
+}
+
+.track-labels
+{
+	float: left;
+	width: 300px;
+
+}
+
+.track-scroll
+{
+	overflow-x: scroll;
+
+}
+
+.track-label
+{
+	height: $track-height;
+	margin-bottom: $track-margin;
+	background: #333;
+}
+.track 
+{
+	height:$track-height;
+	margin-bottom: $track-margin;
+	// width: 2000px;
+	background: #555;	
+	position: relative;
+
+}
+
+.key-frame
+{
+	position: absolute;
+	
+	box-sizing: border-box;
+
+	width: $key-frame-width;
+	height: $track-height;
+	
+	border: 1px solid #777;
+	background: #222;
+
+	cursor: -webkit-grab;
+}
+
+
+.noselect {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}

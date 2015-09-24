@@ -1,20 +1,10 @@
-$(main);
-
-function main() {
-	$(".timeline").each(function() {
-		new Timeline(this);
-	});
-
-}
-
-function Timeline(element) {
+export function Timeline(element) {
 	console.log("Construct Timeline");
 	this._element = $(element);
 	this._slider = $('<input type="range" value="100" min="10" max="100">');
 
 	var that = this;
 	this._slider.on("input", function() {
-		
 		that.setScale($(this).val());
 	} );
 
@@ -25,9 +15,9 @@ function Timeline(element) {
 	this._scale = 100;
 	
 	this._tracks = [];
-	this._tracks.push(new Track(this));
-	this._tracks.push(new Track(this));
-	this._tracks.push(new Track(this));
+	for (var i = 0; i < 5; i++) {
+		this._tracks.push(new Track(this));
+	}
 
 	this.draw();
 }
@@ -50,14 +40,16 @@ function Track(timeline) {
 	this._timeline = timeline;
 
 	this._element = $('<div class="track"></div>');
-	this._timeline._element.append(this._element);
-	this._element.before( $('<div class="label">Track X</div>') );
+	this._timeline._element.find(".track-scroll").append(this._element);
+
+	this._labelElement = $('<div class="track-label"></div>');
+	this._timeline._element.find(".track-labels").append(this._labelElement);
+	// this._element.before( $('<div class="label">Track X</div>') );
 	
 	this._keyFrames = [];
-	var num = Math.random()*15;
-	for (var i = 0; i < num; i++) {
+	for (var i = 0; i < 50; i++) {
 		var k = new KeyFrame(this);
-		k.setTime(Math.random()*40);
+		k.setTime(Math.random()*this._timeline._duration);
 		this._keyFrames.push(k);
 	}
 }
