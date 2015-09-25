@@ -14,7 +14,7 @@ function main() {
 }
 
 var data = {
-	duration: 10,
+	duration: 15,
 	tracks: [{
 		name: "position_x",
 		keyFrames: [

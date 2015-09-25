@@ -11,8 +11,8 @@ export function Timeline(element, data = {}) {
 
 	// slider
 	let that = this;
-	this._slider = $('<input type="range" value="100" min="10" max="100">');
-	this._element.after(this._slider);
+	this._slider = this._element.find(".scale");//$('<input type="range" value="100" min="10" max="100">');
+	//this._element.after(this._slider);
 	this._slider.on("input", function() {
 		that.setScale($(this).val());
 	} );
@@ -33,7 +33,6 @@ Timeline.prototype.loadData = function(data = {}) {
 	});
 	this._duration = data.duration;
 	
-	console.log(data.tracks);
 	_.forEach(data.tracks, (trackData) => {
 			let t = new Track(this, trackData);
 			this._tracks.push(t);
@@ -58,7 +57,7 @@ Timeline.prototype._draw = function() {
 
 
 function Track(timeline, data = {}) {
-	console.log("Construct Track");
+	// console.log("Construct Track");
 
 	this._timeline = timeline;
 	
@@ -91,7 +90,6 @@ Track.prototype.loadData = function(data = {}) {
 
 Track.prototype.setName = function(name) {
 	this._name = name;
-	console.log(this);
 	this._labelElement.text(this._name);
 };
 
@@ -118,20 +116,22 @@ Ruler.prototype._draw = function() {
 	this._element.empty();
 	// this.keyFrames = [];
 
-	let targetSpacing = 100;
+	let targetSpacing = 75;
 	let ticks = Math.floor(width / targetSpacing);
-	let spacing = (width / ticks).toFixed(2);
+	let spacing = width / ticks;
 	let spacingSeconds = spacing / this._timeline._scale;
-	
-	for(let i = 0; i < ticks; i++) {
-		let label = Number((spacingSeconds * i).toFixed(2)) + " s"
+	spacingSeconds = Math.round(spacingSeconds);
+
+
+	for(let i = 0; spacingSeconds * i < this._timeline._duration ; i++) {
+		let label = Number((spacingSeconds * i).toFixed(2))
 
 		let k = new KeyFrame(this, {
 			time: i * spacingSeconds,
+			locked: true,
 			element: $('<div class="tick"></div>').text(label)
 		});
 		k._draw();
-		console.log("k", k);
 	}
 
 	
@@ -141,7 +141,7 @@ Ruler.prototype._draw = function() {
 
 
 function KeyFrame(track, data = {}) {
-	console.log("Construct Keyframe");
+	// console.log("Construct Keyframe");
 
 	this._track = track;
 	
@@ -154,13 +154,17 @@ KeyFrame.prototype.loadData = function(data = {}) {
 	_.defaults(data, {
 		time: 0,
 		value: 0,
+		locked: false,
 		element: $('<div class="key-frame"></div>')
 	});
 	
 	this._element = data.element;
 	this._track._element.append(this._element);
-	this._mousedownHandler = this.mousedown.bind(this);
-	this._element.mousedown(this._mousedownHandler);
+	
+	if (!data.locked) {
+		this._mousedownHandler = this.mousedown.bind(this);
+		this._element.mousedown(this._mousedownHandler);
+	}
 
 	this._time = data.time;
 	this._value = data.value;

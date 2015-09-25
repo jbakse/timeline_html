@@ -6,6 +6,7 @@ $key-frame-width: 8px;
 $scrollbar-width: 15px;
 $timeline-max-height: 300px;
 $ruler-height: 40px;
+$label-width: 300px;
 
 body
 {
@@ -17,16 +18,16 @@ body
 .timeline
 {
 	background: transparent;
-	
+	position: relative;
+
 	margin: 30px;
 	cursor: default;
 }
 
 .track-legend
 {
-	background: black;
 	float: left;
-	width: 300px;
+	width: $label-width;
 	height: 40px;
 }
 
@@ -37,6 +38,7 @@ body
 	
 	overflow: hidden;
 	position: relative;
+	
 }
 
 .ruler 
@@ -66,7 +68,7 @@ body
 .track-labels
 {
 	float: left;
-	width: 300px;
+	width: $label-width;
 	max-height: $timeline-max-height - $scrollbar-width;
 	overflow: hidden;
 }
@@ -76,6 +78,7 @@ body
 	max-height: $timeline-max-height;
 	overflow-x: scroll;
 	overflow-y: auto;
+
 
 }
 
@@ -111,6 +114,12 @@ body
 	cursor: grab;
 }
 
+.scale {
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: $label-width;
+}
 
 
 
@@ -137,4 +146,34 @@ body
 	::-webkit-scrollbar-corner {
 		background: transparent;
 	}
+}
+
+
+input[type=range]{
+    -webkit-appearance: none;
+    background: transparent;
+    margin: 0;
+    padding: 0;
+    height: $scrollbar-width;
+}
+
+
+input[type=range]::-webkit-slider-runnable-track {
+	margin: 0 2px;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    // border: none;
+    height: $scrollbar-width;
+    width: 5px;
+    background: #999;
+
+}
+
+input[type=range]:focus {
+    outline: none;
+}
+
+input[type=range]:focus::-webkit-slider-runnable-track {
 }
