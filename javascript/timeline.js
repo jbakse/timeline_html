@@ -1,49 +1,107 @@
-export function Timeline(element) {
+export function Timeline(element, data = {}) {
 	console.log("Construct Timeline");
-	this._element = $(element);
-	this._slider = $('<input type="range" value="100" min="10" max="100">');
-
 	
+	this._element = $(element);
+	this._duration = 60;
+	this._scale = 100;
+	this._tracks = [];
+	this._ruler = new Ruler(this);
 
-	var that = this;
+	this._draw();
+
+	// slider
+	let that = this;
+	this._slider = $('<input type="range" value="100" min="10" max="100">');
+	this._element.after(this._slider);
 	this._slider.on("input", function() {
 		that.setScale($(this).val());
 	} );
 
-
-	this._element.after(this._slider);
-
-	this._duration = 50;
-	this._scale = 100;
-	
-	this._tracks = [];
-	for (var i = 0; i < 30; i++) {
-		this._tracks.push(new Track(this));
-	}
-
-	this._ruler = new Ruler(this);
-
-
-	this.draw();
-
+	// scrolling
 	this._element.find(".track-scroll").scroll( (e) => {
 		this._element.find(".track-labels").scrollTop(this._element.find(".track-scroll").scrollTop());
 		this._element.find(".ruler-scroll").scrollLeft(this._element.find(".track-scroll").scrollLeft());
 	});
+
+	this.loadData(data);
 }
+
+Timeline.prototype.loadData = function(data = {}) {
+	_.defaults(data, {
+		duration: 60,
+		tracks: []
+	});
+	this._duration = data.duration;
+	
+	console.log(data.tracks);
+	_.forEach(data.tracks, (trackData) => {
+			let t = new Track(this, trackData);
+			this._tracks.push(t);
+		}
+	);
+
+	this._draw();
+};
 
 Timeline.prototype.setScale = function(scale) {
 	this._scale = scale;
-	this.draw();
+	this._draw();
 };
 
-Timeline.prototype.draw = function() {
-	this._ruler.draw();
+Timeline.prototype._draw = function() {
+	this._ruler._draw();
 
 	this._tracks.forEach( function(t) {
-		t.draw();
+		t._draw();
 	});
 };
+
+
+function Track(timeline, data = {}) {
+	console.log("Construct Track");
+
+	this._timeline = timeline;
+	
+	this.loadData(data);
+}
+
+Track.prototype.loadData = function(data = {}) {
+	_.defaults(data, {
+		name: "unnamed",
+		keyFrames: [],
+		element: $('<div class="track"></div>'),
+		labelElement: $('<div class="track-label"></div>')
+	});
+
+	this._element = data.element;
+	this._timeline._element.find(".track-scroll").append(this._element);
+
+	this._labelElement = data.labelElement;
+	this._timeline._element.find(".track-labels").append(this._labelElement);
+
+	this.setName(data.name);
+
+	this._keyFrames = [];
+	_.forEach(data.keyFrames, (keyFrameData) => {
+		let k = new KeyFrame(this, keyFrameData);
+		this._keyFrames.push(k);
+	});
+
+};
+
+Track.prototype.setName = function(name) {
+	this._name = name;
+	console.log(this);
+	this._labelElement.text(this._name);
+};
+
+Track.prototype._draw = function() {
+	this._element.width(this._timeline._duration * this._timeline._scale);
+	this._keyFrames.forEach( function(k) {
+		k._draw();
+	});
+};
+
 
 function Ruler(timeline) {
 	this._timeline = timeline;
@@ -52,71 +110,75 @@ function Ruler(timeline) {
 	this._timeline._element.find(".ruler-scroll").append(this._element);
 }
 
-Ruler.prototype.draw = function() {
-	this._element.width(this._timeline._duration * this._timeline._scale);
-	this._element.text("This is some text");
-	// this._keyFrames.forEach( function(k) {
-	// 	k.draw();
-	// });
-};
+Ruler.prototype._draw = function() {
+	let width = this._timeline._duration * this._timeline._scale;
+	this._element.width(width);
 
+	//populate
+	this._element.empty();
+	// this.keyFrames = [];
 
-function Track(timeline) {
-	console.log("Construct Track");
+	let targetSpacing = 100;
+	let ticks = Math.floor(width / targetSpacing);
+	let spacing = (width / ticks).toFixed(2);
+	let spacingSeconds = spacing / this._timeline._scale;
 	
-	this._timeline = timeline;
+	for(let i = 0; i < ticks; i++) {
+		let label = Number((spacingSeconds * i).toFixed(2)) + " s"
 
-	this._element = $('<div class="track"></div>');
-	this._timeline._element.find(".track-scroll").append(this._element);
-
-	this._labelElement = $('<div class="track-label"></div>');
-	this._labelElement.text("hi");
-	this._timeline._element.find(".track-labels").append(this._labelElement);
-	// this._element.before( $('<div class="label">Track X</div>') );
-	
-	this._keyFrames = [];
-	for (var i = 0; i < 50; i++) {
-		var k = new KeyFrame(this);
-		k.setTime(Math.random()*this._timeline._duration);
-		this._keyFrames.push(k);
+		let k = new KeyFrame(this, {
+			time: i * spacingSeconds,
+			element: $('<div class="tick"></div>').text(label)
+		});
+		k._draw();
+		console.log("k", k);
 	}
-}
 
-
-Track.prototype.draw = function() {
-	this._element.width(this._timeline._duration * this._timeline._scale);
-	this._keyFrames.forEach( function(k) {
-		k.draw();
-	});
+	
+	
 };
 
-function KeyFrame(track) {
-	// console.log("Construct Keyframe");
+
+
+function KeyFrame(track, data = {}) {
+	console.log("Construct Keyframe");
 
 	this._track = track;
-
-	this._time = 0;
-
-	this._element = $('<div class="key-frame"></div>');
-	this._track._element.append(this._element);
 	
+	this.loadData(data);
+
+
+}
+
+KeyFrame.prototype.loadData = function(data = {}) {
+	_.defaults(data, {
+		time: 0,
+		value: 0,
+		element: $('<div class="key-frame"></div>')
+	});
+	
+	this._element = data.element;
+	this._track._element.append(this._element);
 	this._mousedownHandler = this.mousedown.bind(this);
 	this._element.mousedown(this._mousedownHandler);
-}
+
+	this._time = data.time;
+	this._value = data.value;
+};
 
 KeyFrame.prototype.setTime = function(time) {
 	this._time = time;
-	this.draw();
+	this._draw();
 };
 
-KeyFrame.prototype.draw = function() {
+KeyFrame.prototype._draw = function() {
 	this._element.css("left", this._time * this._track._timeline._scale + "px");
 };
 
 KeyFrame.prototype.mousedown = function(e) {
 	// console.log("mousedown", this);
 
-	var mouseX = e.pageX - this._element.parent().position().left;
+	let mouseX = e.pageX - this._element.parent().position().left;
 	this.dragOffsetX = mouseX - this._element.position().left;
 	this._element.parent().append(this._element);
 	this._mousemoveHandler = this.mousemove.bind(this);
@@ -129,10 +191,10 @@ KeyFrame.prototype.mousedown = function(e) {
 
 
 KeyFrame.prototype.mousemove = function(e) {
-	var mouseX = e.pageX - this._element.parent().position().left;
-	var pos = mouseX - this.dragOffsetX;
+	let mouseX = e.pageX - this._element.parent().position().left;
+	let pos = mouseX - this.dragOffsetX;
 	this._time = pos /  this._track._timeline._scale;
-	this.draw();
+	this._draw();
 };
 
 

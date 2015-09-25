@@ -1,10 +1,17 @@
+@import url(https://fonts.googleapis.com/css?family=Source+Code+Pro);
+
 $track-height: 20px;
 $track-margin: 2px;
 $key-frame-width: 8px;
+$scrollbar-width: 15px;
+$timeline-max-height: 300px;
+$ruler-height: 40px;
+
 body
 {
 	margin: 0;
 	background: #033;
+	font-family: 'Source Code Pro', mono;
 }
 
 .timeline
@@ -25,7 +32,7 @@ body
 
 .ruler-scroll
 {
-	height: 40px;
+	height: $ruler-height;
 	background: #222;
 	
 	overflow: hidden;
@@ -34,11 +41,24 @@ body
 
 .ruler 
 {
-	height:$track-height;
+	height: 100%;
 	margin-bottom: $track-margin;
 	width: 2000px;
-	background: #559;	
+	background: #333;	
 	position: relative;
+}
+
+.tick
+{
+	position: absolute;
+	
+	box-sizing: border-box;
+
+	height: $ruler-height;
+	
+	border-left: 1px solid #777;
+	padding-left: 4px;
+	color: white;
 
 }
 
@@ -47,13 +67,13 @@ body
 {
 	float: left;
 	width: 300px;
-	height: 400px - 20px;
+	max-height: $timeline-max-height - $scrollbar-width;
 	overflow: hidden;
 }
 
 .track-scroll
 {
-	height: 400px;
+	max-height: $timeline-max-height;
 	overflow-x: scroll;
 	overflow-y: auto;
 
@@ -92,6 +112,9 @@ body
 }
 
 
+
+
+
 .noselect {
 	user-select: none;
 }
@@ -99,8 +122,8 @@ body
 .timeline {
 
 	::-webkit-scrollbar {
-	    width: 15px;
-	    height: 15px;
+	    width: $scrollbar-width;
+	    height: $scrollbar-width;
 	}
 	 
 	::-webkit-scrollbar-track {
@@ -108,7 +131,7 @@ body
 	}
 	 
 	::-webkit-scrollbar-thumb {
-		background-color: red;
+		background-color: #999;
 	}
 
 	::-webkit-scrollbar-corner {
