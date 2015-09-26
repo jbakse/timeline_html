@@ -21,7 +21,7 @@ body
 	position: relative;
 
 	margin: 30px;
-	cursor: default;
+	// cursor: default;
 }
 
 .track-legend
@@ -38,7 +38,6 @@ body
 	
 	overflow: hidden;
 	position: relative;
-	
 }
 
 .ruler 
@@ -64,6 +63,43 @@ body
 
 }
 
+.playback-head
+{
+	position: absolute;
+	
+	box-sizing: border-box;
+
+	height: 100%;
+	
+	border: 1px solid #F00;
+	width: 20px;
+	margin-left: -10px;
+	background-color: rgba(255, 0, 0, .5);
+	mix-blend-mode: lighten;
+	padding-left: 4px;
+	color: white;
+
+	z-index: 1000;
+
+}
+
+.playback-line
+{
+	position: absolute;
+	
+	box-sizing: border-box;
+
+	height: 100%;
+	
+	border-left: 1px solid #F00;
+	width: 1px;
+	
+	z-index: 1000;
+
+}
+
+
+
 
 .track-labels
 {
@@ -78,7 +114,7 @@ body
 	max-height: $timeline-max-height;
 	overflow-x: scroll;
 	overflow-y: auto;
-
+	position: relative;
 
 }
 
@@ -97,6 +133,8 @@ body
 	background: #555;	
 	position: relative;
 
+
+
 }
 
 .key-frame
@@ -111,7 +149,7 @@ body
 	border: 1px solid #777;
 	background: #222;
 
-	cursor: grab;
+	// cursor: grab;
 }
 
 .scale {

@@ -2,6 +2,7 @@ export function Timeline(element, data = {}) {
 	console.log("Construct Timeline");
 	
 	this._element = $(element);
+	this._time = 0.5;
 	this._duration = 60;
 	this._scale = 100;
 	this._tracks = [];
@@ -22,6 +23,8 @@ export function Timeline(element, data = {}) {
 		this._element.find(".track-labels").scrollTop(this._element.find(".track-scroll").scrollTop());
 		this._element.find(".ruler-scroll").scrollLeft(this._element.find(".track-scroll").scrollLeft());
 	});
+
+	this._playbackHead = new PlaybackHead(this, {time: 1});
 
 	this.loadData(data);
 }
@@ -82,7 +85,7 @@ Track.prototype.loadData = function(data = {}) {
 
 	this._keyFrames = [];
 	_.forEach(data.keyFrames, (keyFrameData) => {
-		let k = new KeyFrame(this, keyFrameData);
+		let k = new KeyFrame(this._timeline, this._element, keyFrameData);
 		this._keyFrames.push(k);
 	});
 
@@ -105,6 +108,8 @@ function Ruler(timeline) {
 	this._timeline = timeline;
 
 	this._element = $('<div class="ruler"></div>');
+	this._ticksElement = $('<div class="ticks"></div>');
+	
 	this._timeline._element.find(".ruler-scroll").append(this._element);
 }
 
@@ -113,7 +118,7 @@ Ruler.prototype._draw = function() {
 	this._element.width(width);
 
 	//populate
-	this._element.empty();
+	// this._element.empty();
 	// this.keyFrames = [];
 
 	let targetSpacing = 75;
@@ -123,89 +128,121 @@ Ruler.prototype._draw = function() {
 	spacingSeconds = Math.round(spacingSeconds);
 
 
-	for(let i = 0; spacingSeconds * i < this._timeline._duration ; i++) {
-		let label = Number((spacingSeconds * i).toFixed(2))
 
-		let k = new KeyFrame(this, {
+
+
+
+	for(let i = 0; spacingSeconds * i < this._timeline._duration ; i++) {
+		let label = Number((spacingSeconds * i).toFixed(2));
+
+		let k = new Marker(this._timeline, this._element, {
 			time: i * spacingSeconds,
-			locked: true,
+			// locked: true,
 			element: $('<div class="tick"></div>').text(label)
 		});
 		k._draw();
-	}
-
-	
-	
+	}	
 };
 
 
 
-function KeyFrame(track, data = {}) {
-	// console.log("Construct Keyframe");
-
-	this._track = track;
-	
+function Marker(timeline, parentElement, data = {}) {
+	this._timeline = timeline;
+	this._parentElement = parentElement;
 	this.loadData(data);
-
-
 }
 
-KeyFrame.prototype.loadData = function(data = {}) {
+Marker.prototype.loadData = function(data = {}) {
 	_.defaults(data, {
 		time: 0,
-		value: 0,
-		locked: false,
-		element: $('<div class="key-frame"></div>')
+		element: $('<div class="key-frame"></div>'),
+		locked: true
 	});
 	
-	this._element = data.element;
-	this._track._element.append(this._element);
-	
-	if (!data.locked) {
-		this._mousedownHandler = this.mousedown.bind(this);
-		this._element.mousedown(this._mousedownHandler);
-	}
-
 	this._time = data.time;
-	this._value = data.value;
+	this._element = data.element;
+	this._parentElement.append(this._element);
+
+	if (!data.locked) {
+		this._enableDrag();
+	}
 };
 
-KeyFrame.prototype.setTime = function(time) {
+Marker.prototype._enableDrag = function() {
+	this._element.draggable({
+		axis: "x",
+		cursor: "grab",
+		scroll: true,
+		containment: "parent",
+		drag: this._dragHandler.bind(this)
+	});
+	this._element.css("position", "absolute");
+};
+
+Marker.prototype._dragHandler = function(e) {
+	this._time = this._element.position().left /  this._timeline._scale;
+};
+
+Marker.prototype._draw = function() {
+	this._element.css("left", this._time * this._timeline._scale + "px");
+};
+
+Marker.prototype.setTime = function(time) {
 	this._time = time;
 	this._draw();
 };
 
-KeyFrame.prototype._draw = function() {
-	this._element.css("left", this._time * this._track._timeline._scale + "px");
-};
-
-KeyFrame.prototype.mousedown = function(e) {
-	// console.log("mousedown", this);
-
-	let mouseX = e.pageX - this._element.parent().position().left;
-	this.dragOffsetX = mouseX - this._element.position().left;
-	this._element.parent().append(this._element);
-	this._mousemoveHandler = this.mousemove.bind(this);
-	$(window).mousemove(this._mousemoveHandler);
-
-	this._mouseupHandler = this.mouseup.bind(this);
-	$(window).mouseup(this._mouseupHandler);
-};
 
 
+function KeyFrame(timeline, parentElement, data = {}) {
+	Marker.call(this, timeline, parentElement, data);
+}
 
-KeyFrame.prototype.mousemove = function(e) {
-	let mouseX = e.pageX - this._element.parent().position().left;
-	let pos = mouseX - this.dragOffsetX;
-	this._time = pos /  this._track._timeline._scale;
-	this._draw();
+KeyFrame.prototype = Object.create(Marker.prototype);
+KeyFrame.prototype.constructor = KeyFrame;
+
+KeyFrame.prototype.loadData = function(data = {}) {
+	_.defaults(data, {
+		value: 0,
+		locked: false
+	});
+
+	Marker.prototype.loadData.call(this, data);
+	this._value = data.value;
 };
 
 
-KeyFrame.prototype.mouseup = function(e) {
-	// console.log("mouseup", this);
+function PlaybackHead(timeline, data = {}) {
+	let parentElement = timeline._element.find(".ruler");
+	Marker.call(this, timeline, parentElement, data);
+}
 
-	$(window).off("mousemove", this._mousemoveHandler);
-	$(window).off("mouseup", this._mouseupHandler);
+PlaybackHead.prototype = Object.create(Marker.prototype);
+PlaybackHead.prototype.constructor = PlaybackHead;
 
+PlaybackHead.prototype.loadData = function(data = {}) {
+	_.defaults(data, {
+		element: $('<div class="playback-head"></div>'),
+		lineElement: $('<div class="playback-line"></div>'),
+		locked: false
+	});
+
+	Marker.prototype.loadData.call(this, data);
+
+	console.log(this);
+	// this._element = data.element;
+	// this._timeline._element.find(".ruler").append(this._element);
+
+	this._lineElement = data.lineElement;
+	this._timeline._element.find(".track-scroll").append(this._lineElement);
+
+
+	// if (!data.locked) {
+	// 	this._mousedownHandler = this.mousedown.bind(this);
+	// 	this._element.mousedown(this._mousedownHandler);
+	// }
+
+	// this._time = data.time;
 };
+
+
