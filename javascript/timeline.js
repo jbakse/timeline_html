@@ -1,21 +1,33 @@
 export function Timeline(element, data = {}) {
 	console.log("Construct Timeline");
-	
 	this._element = $(element);
-	this._time = 0.5;
-	this._duration = 60;
-	this._scale = 100;
+	this.loadData(data);
+}
+
+Timeline.prototype.loadData = function(data = {}) {
+	_.defaults(data, {
+		time: 0,
+		duration: 60,
+		scale: 100,
+		tracks: []
+	});
+
+	this._time = data.time;
+	this._duration = data.duration;
+	this._scale = data.scale;
 	this._tracks = [];
+	_.forEach(data.tracks, (trackData) => {
+			let t = new Track(this, trackData);
+			this._tracks.push(t);
+		}
+	);
+
 	this._ruler = new Ruler(this);
 	this._playbackHead = new PlaybackHead(this, {time: 1});
-
-	this._draw();
-
-
+	
 	// slider
 	let that = this;
-	this._slider = this._element.find(".scale");//$('<input type="range" value="100" min="10" max="100">');
-	//this._element.after(this._slider);
+	this._slider = this._element.find(".scale");
 	this._slider.on("input", function() {
 		that.setScale($(this).val());
 	} );
@@ -25,24 +37,6 @@ export function Timeline(element, data = {}) {
 		this._element.find(".track-labels").scrollTop(this._element.find(".track-scroll").scrollTop());
 		this._element.find(".ruler-scroll").scrollLeft(this._element.find(".track-scroll").scrollLeft());
 	});
-
-	
-
-	this.loadData(data);
-}
-
-Timeline.prototype.loadData = function(data = {}) {
-	_.defaults(data, {
-		duration: 60,
-		tracks: []
-	});
-	this._duration = data.duration;
-	
-	_.forEach(data.tracks, (trackData) => {
-			let t = new Track(this, trackData);
-			this._tracks.push(t);
-		}
-	);
 
 	this._draw();
 };
@@ -55,7 +49,6 @@ Timeline.prototype.setScale = function(scale) {
 Timeline.prototype._draw = function() {
 	this._ruler._draw();
 	this._playbackHead._draw();
-
 	this._tracks.forEach( function(t) {
 		t._draw();
 	});
@@ -63,10 +56,7 @@ Timeline.prototype._draw = function() {
 
 
 function Track(timeline, data = {}) {
-	// console.log("Construct Track");
-
 	this._timeline = timeline;
-	
 	this.loadData(data);
 }
 
@@ -110,11 +100,13 @@ Track.prototype._draw = function() {
 function Ruler(timeline) {
 	this._timeline = timeline;
 
+	this._targetSpacing = 75;
+
 	this._element = $('<div class="ruler"></div>');
+	this._timeline._element.find(".ruler-scroll").append(this._element);
+	
 	this._ticksElement = $('<div class="ticks"></div>');
 	this._element.append(this._ticksElement);
-	
-	this._timeline._element.find(".ruler-scroll").append(this._element);
 }
 
 Ruler.prototype._draw = function() {
@@ -125,8 +117,8 @@ Ruler.prototype._draw = function() {
 	this._ticksElement.empty();
 
 
-	let targetSpacing = 75;
-	let ticks = Math.floor(width / targetSpacing);
+	
+	let ticks = Math.floor(width / this._targetSpacing);
 	let spacing = width / ticks;
 	let spacingSeconds = spacing / this._timeline._scale;
 	spacingSeconds = Math.round(spacingSeconds);
@@ -135,12 +127,10 @@ Ruler.prototype._draw = function() {
 	for(let i = 0; spacingSeconds * i < this._timeline._duration ; i++) {
 		let label = Number((spacingSeconds * i).toFixed(2));
 
-		let k = new Marker(this._timeline, this._ticksElement, {
+		new Marker(this._timeline, this._ticksElement, {
 			time: i * spacingSeconds,
-			// locked: true,
 			element: $('<div class="tick"></div>').text(label)
-		});
-		k._draw();
+		})._draw();
 	}	
 };
 
@@ -171,7 +161,7 @@ Marker.prototype.loadData = function(data = {}) {
 Marker.prototype._enableDrag = function() {
 	this._element.draggable({
 		axis: "x",
-		cursor: "grab",
+		cursor: "-webkit-grabbing",
 		scroll: true,
 		containment: "parent",
 		drag: this._dragHandler.bind(this)
