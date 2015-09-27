@@ -6,7 +6,7 @@ $(main);
 function main() {
 	console.clear();
 	console.log("Hello.");
-	
+
 	// for(let t = 0; t < 100; t++) {
 	// 	let tData = {name: "unnamed", keyFrames: []};
 	// 	for(let k = 0; k < 100; k++) {
@@ -17,7 +17,7 @@ function main() {
 	// 	data.tracks.push(tData);
 	// }
 
-	$(".timeline").each(function() {
+	$(".timeline").each(function AttachTimeline() {
 		let t = new Timeline(this, data);
 	});
 

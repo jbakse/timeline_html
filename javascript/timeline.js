@@ -7,8 +7,10 @@ export function Timeline(element, data = {}) {
 	this._scale = 100;
 	this._tracks = [];
 	this._ruler = new Ruler(this);
+	this._playbackHead = new PlaybackHead(this, {time: 1});
 
 	this._draw();
+
 
 	// slider
 	let that = this;
@@ -18,13 +20,13 @@ export function Timeline(element, data = {}) {
 		that.setScale($(this).val());
 	} );
 
-	// scrolling
+	// syncronize scrolling
 	this._element.find(".track-scroll").scroll( (e) => {
 		this._element.find(".track-labels").scrollTop(this._element.find(".track-scroll").scrollTop());
 		this._element.find(".ruler-scroll").scrollLeft(this._element.find(".track-scroll").scrollLeft());
 	});
 
-	this._playbackHead = new PlaybackHead(this, {time: 1});
+	
 
 	this.loadData(data);
 }
@@ -52,6 +54,7 @@ Timeline.prototype.setScale = function(scale) {
 
 Timeline.prototype._draw = function() {
 	this._ruler._draw();
+	this._playbackHead._draw();
 
 	this._tracks.forEach( function(t) {
 		t._draw();
@@ -109,6 +112,7 @@ function Ruler(timeline) {
 
 	this._element = $('<div class="ruler"></div>');
 	this._ticksElement = $('<div class="ticks"></div>');
+	this._element.append(this._ticksElement);
 	
 	this._timeline._element.find(".ruler-scroll").append(this._element);
 }
@@ -118,8 +122,8 @@ Ruler.prototype._draw = function() {
 	this._element.width(width);
 
 	//populate
-	// this._element.empty();
-	// this.keyFrames = [];
+	this._ticksElement.empty();
+
 
 	let targetSpacing = 75;
 	let ticks = Math.floor(width / targetSpacing);
@@ -128,14 +132,10 @@ Ruler.prototype._draw = function() {
 	spacingSeconds = Math.round(spacingSeconds);
 
 
-
-
-
-
 	for(let i = 0; spacingSeconds * i < this._timeline._duration ; i++) {
 		let label = Number((spacingSeconds * i).toFixed(2));
 
-		let k = new Marker(this._timeline, this._element, {
+		let k = new Marker(this._timeline, this._ticksElement, {
 			time: i * spacingSeconds,
 			// locked: true,
 			element: $('<div class="tick"></div>').text(label)
@@ -179,8 +179,8 @@ Marker.prototype._enableDrag = function() {
 	this._element.css("position", "absolute");
 };
 
-Marker.prototype._dragHandler = function(e) {
-	this._time = this._element.position().left /  this._timeline._scale;
+Marker.prototype._dragHandler = function(e, ui) {
+	this._time = ui.position.left / this._timeline._scale;
 };
 
 Marker.prototype._draw = function() {
@@ -229,20 +229,17 @@ PlaybackHead.prototype.loadData = function(data = {}) {
 
 	Marker.prototype.loadData.call(this, data);
 
-	console.log(this);
-	// this._element = data.element;
-	// this._timeline._element.find(".ruler").append(this._element);
-
 	this._lineElement = data.lineElement;
 	this._timeline._element.find(".track-scroll").append(this._lineElement);
-
-
-	// if (!data.locked) {
-	// 	this._mousedownHandler = this.mousedown.bind(this);
-	// 	this._element.mousedown(this._mousedownHandler);
-	// }
-
-	// this._time = data.time;
 };
 
 
+PlaybackHead.prototype._dragHandler = function(e, ui) {
+	this._time = ui.position.left / this._timeline._scale;
+	this._lineElement.css("left", this._time * this._timeline._scale + "px");
+};
+
+PlaybackHead.prototype._draw = function() {
+	this._element.css("left", this._time * this._timeline._scale + "px");
+	this._lineElement.css("left", this._time * this._timeline._scale + "px");
+};
