@@ -229,6 +229,8 @@ KeyFrame.prototype.loadData = function(data = {}) {
 
 	Marker.prototype.loadData.call(this, data);
 	this._value = data.value;
+
+	this._element.on("mousedown", ()=>inspect(this));
 };
 
 KeyFrame.prototype.getData = function() {
@@ -238,7 +240,6 @@ KeyFrame.prototype.getData = function() {
 	};
 
 	return data;
-
 };
 
 KeyFrame.prototype._dragHandler = function(e, ui) {
@@ -246,7 +247,22 @@ KeyFrame.prototype._dragHandler = function(e, ui) {
 	this._timeline.updateData();
 };
 
+KeyFrame.prototype.update = function() {
+	console.log("update", this.value, this);
+//	this._timeline.updateData();
+};
 
+
+function inspect(keyframe) {
+	console.log("rivets", rivets, $(".inspector-container"), keyframe);
+	if (!inspect.once) {
+		inspect.data = {};
+		inspect.data.keyframe = keyframe;
+		rivets.bind($(".inspector-container")[0], inspect.data);
+	}
+	inspect.data.keyframe = keyframe;
+	inspect.once = true;
+}
 
 
 function PlaybackHead(timeline, data = {}) {

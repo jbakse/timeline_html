@@ -24,6 +24,31 @@ body
 	// cursor: default;
 }
 
+.inspector-container
+{
+	color: white;
+	margin: 30px;
+	background-color: #333;
+	padding: 10px;
+}
+
+.inspector-container input
+{
+	background-color: black;
+	color: #AAA;
+	border: 1px solid #666;
+	padding: 3px;
+	font-size: 14px;
+}
+
+.inspector-container input:focus
+{
+	border: 1px solid #99B;
+	outline: none;
+}
+
+
+
 .json-view
 {
 	color: white;
