@@ -18,6 +18,10 @@ function main() {
 	// }
 
 	$(".timeline").each(function AttachTimeline() {
+		data.dataChanged = function(data) {
+			console.log("data changed", data);
+			$(".json-view").text(JSON.stringify(data, null, ' '));
+		};
 		let t = new Timeline(this, data);
 	});
 

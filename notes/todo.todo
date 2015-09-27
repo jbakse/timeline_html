@@ -1,0 +1,4 @@
+Refactor
+----	Seperate rethink load data. We have two classes of data runtime confguration and the actual "document" data. element, locked, and so forth are config, time and value are document data. 
+
+----	Using _ for private members everywhere, but nothing is really respecting that. Clean it up to be respected or maybe just remove the _
