@@ -231,6 +231,8 @@ KeyFrame.prototype.loadData = function(data = {}) {
 	this._value = data.value;
 
 	this._element.on("mousedown", ()=>inspect(this));
+
+	this.update = this.update.bind(this);
 };
 
 KeyFrame.prototype.getData = function() {
@@ -248,9 +250,11 @@ KeyFrame.prototype._dragHandler = function(e, ui) {
 };
 
 KeyFrame.prototype.update = function() {
-	console.log("update", this.value, this);
-//	this._timeline.updateData();
+	console.log("update", this._value, this);
+	this._draw();
+	this._timeline.updateData();
 };
+
 
 
 function inspect(keyframe) {
