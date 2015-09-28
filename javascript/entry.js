@@ -6,21 +6,34 @@ $(main);
 function main() {
 	console.clear();
 
-	for(let t = 0; t < 10; t++) {
-		let tData = {name: "unnamed", keyFrames: []};
-		for(let k = 0; k < 100; k++) {
-			tData.keyFrames.push(
-				{time: Math.random() * 10, value: Math.random() * 10}
-			);
+
+	data = injectTestData(data);
+	main_ractive();
+	
+}
+
+function injectTestData(data) {
+	for (let t = 0; t < 10; t++) {
+		let tData = {
+			name: "unnamed",
+			keyFrames: []
+		};
+		for (let k = 0; k < 100; k++) {
+			tData.keyFrames.push({
+				time: Math.random() * 10,
+				value: Math.random() * 10
+			});
 		}
-		data.data.tracks.push(tData);
+		data.tracks.push(tData);
 	}
+	return data;
+}
 
-
+function main_ractive(){
 	var ractive = new Ractive({
 		el: '#container',
 		template: template,
-		data: data,
+		data: {data: data},
 		magic: true,
 		decorators: {draggable: draggableDecorator}
 	});
@@ -28,8 +41,6 @@ function main() {
 	ractive.on('activateKeyFrame', function(event) {
 		this.set("activeKeyFrame", event.context);
 	});
-
-	
 }
 var draggableDecorator = function(node, data, scale) {
 
@@ -53,29 +64,19 @@ var draggableDecorator = function(node, data, scale) {
 };
 
 
-// function main() {
-// 	console.clear();
-// 	console.log("Hello.");
+function main_js() {
+	console.clear();
+	console.log("Hello.");
 
-// 	// for(let t = 0; t < 100; t++) {
-// 	// 	let tData = {name: "unnamed", keyFrames: []};
-// 	// 	for(let k = 0; k < 100; k++) {
-// 	// 		tData.keyFrames.push(
-// 	// 			{time: Math.random() * 10, value: Math.random() * 10}
-// 	// 		);
-// 	// 	}
-// 	// 	data.tracks.push(tData);
-// 	// }
+	$(".timeline").each(function AttachTimeline() {
+		data.dataChanged = function(data) {
+			// console.log("data changed", data);
+			$(".json-view").text(JSON.stringify(data, null, ' '));
+		};
+		let t = new Timeline(this, data);
+	});
 
-// 	$(".timeline").each(function AttachTimeline() {
-// 		data.dataChanged = function(data) {
-// 			//console.log("data changed", data);
-// 			$(".json-view").text(JSON.stringify(data, null, ' '));
-// 		};
-// 		let t = new Timeline(this, data);
-// 	});
-
-// }
+}
 
 let template = `
 	{{#with data}}
@@ -94,8 +95,7 @@ let template = `
 					<div 
 						class="key-frame" 
 						on-mousedown="activateKeyFrame"
-						decorator='draggable:{{.}},{{scale}}'
-						style="left: {{time * scale}}px"
+						
 						data-value={{value}}
 					>
 					</div>
@@ -119,27 +119,26 @@ let template = `
 	</div>
 	
 	<div class="json-view">{{data}}{{JSON.stringify(data, null, " ")}}</div>
-`;
+	`;
 
-
+// decorator='draggable:{{.}},{{scale}}'
+// 						style="left: {{time * scale}}px"
 let data = {
-	data: {
-		duration: 15,
-		scale: 50,
-		tracks: [{
-			name: "position_x",
-			keyFrames: [{
-				time: 1,
-				value: 10
-			}, {
-				time: 2,
-				value: 5
-			}, {
-				time: 3,
-				value: 2
-			}]
+	duration: 15,
+	scale: 50,
+	tracks: [{
+		name: "position_x",
+		keyFrames: [{
+			time: 1,
+			value: 10
 		}, {
-			name: "rotation"
+			time: 2,
+			value: 5
+		}, {
+			time: 3,
+			value: 2
 		}]
-	}
+	}, {
+		name: "rotation"
+	}]
 };
