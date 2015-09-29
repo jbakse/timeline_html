@@ -9,8 +9,7 @@ Timeline.prototype.loadData = function(data = {}) {
 		time: 0,
 		duration: 60,
 		scale: 100,
-		tracks: [],
-		dataChanged: function(){}
+		tracks: []
 	});
 
 	this.data = data;
@@ -31,7 +30,7 @@ Timeline.prototype.loadData = function(data = {}) {
 	});
 
 	this.inspectorObserver = this.inspectorRactive.observe( 'activeKeyFrame.*', ()=>{
-		this.activeKeyFrame._draw && this.activeKeyFrame._draw()
+		this.activeKeyFrame._draw && this.activeKeyFrame._draw();
 	});
 
 
@@ -40,12 +39,13 @@ Timeline.prototype.loadData = function(data = {}) {
 	this._duration = data.duration;
 	this._scale = data.scale;
 	this._tracks = [];
+
+
 	_.forEach(data.tracks, (trackData) => {
 			let t = new Track(this, trackData);
 			this._tracks.push(t);
 		}
 	);
-	this.dataChanged = data.dataChanged;
 
 	this._ruler = new Ruler(this);
 	this._playbackHead = new PlaybackHead(this, {time: 1});
@@ -77,7 +77,7 @@ Timeline.prototype.updateData = function(){
 		d.tracks.push(track.getData());
 	});
 
-	this.dataChanged(d);
+	
 };
 
 
