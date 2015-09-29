@@ -30,14 +30,9 @@ Timeline.prototype.loadData = function(data = {}) {
 	});
 
 	this.inspectorObserver = this.inspectorRactive.observe( 'activeKeyFrame.*', ()=>{
-		this.activeKeyFrame._draw && this.activeKeyFrame._draw();
+		if (this.activeKeyFrame._draw) { this.activeKeyFrame._draw(); }
 	});
 
-
-
-	this._time = data.time;
-	this._duration = data.duration;
-	this._scale = data.scale;
 	this._tracks = [];
 
 
@@ -50,9 +45,10 @@ Timeline.prototype.loadData = function(data = {}) {
 	this._ruler = new Ruler(this);
 	this._playbackHead = new PlaybackHead(this, {time: 1});
 	
-	// slider
+	// scale slider
 	let that = this;
 	this._slider = this._element.find(".scale");
+	this._slider.val(data.scale);
 	this._slider.on("input", function() {
 		that.setScale($(this).val());
 	} );
@@ -62,32 +58,31 @@ Timeline.prototype.loadData = function(data = {}) {
 		this._element.find(".track-labels").scrollTop(this._element.find(".track-scroll").scrollTop());
 		this._element.find(".ruler-scroll").scrollLeft(this._element.find(".track-scroll").scrollLeft());
 	});
-	this.updateData();
+	// this.updateData();
 	this._draw();
 };
 
-Timeline.prototype.updateData = function(){
-	let d = {
-		time: this._time,
-		duration: this._duration,
-		tracks: []
-	};
+// Timeline.prototype.updateData = function(){
+// 	let d = {
+// 		time: this._time,
+// 		duration: this._duration,
+// 		tracks: []
+// 	};
 
-	_.forEach(this._tracks,  (track)=> {
-		d.tracks.push(track.getData());
-	});
+// 	_.forEach(this._tracks,  (track)=> {
+// 		d.tracks.push(track.getData());
+// 	});
 
 	
-};
+// };
 
 
 Timeline.prototype.setScale = function(scale) {
-	this._scale = scale;
+	this.data.scale = scale;
 	this._draw();
 };
 
 Timeline.prototype.setActiveKeyFrame = function(keyFrame) {
-	console.log("saf", keyFrame);
 	this.activeKeyFrame = keyFrame;
 };
 
@@ -148,7 +143,7 @@ Track.prototype.setName = function(name) {
 };
 
 Track.prototype._draw = function() {
-	this._element.width(this._timeline._duration * this._timeline._scale);
+	this._element.width(this._timeline.data.duration * this._timeline.data.scale);
 	this._keyFrames.forEach( function(k) {
 		k._draw();
 	});
@@ -168,7 +163,7 @@ function Ruler(timeline) {
 }
 
 Ruler.prototype._draw = function() {
-	let width = this._timeline._duration * this._timeline._scale;
+	let width = this._timeline.data.duration * this._timeline.data.scale;
 	this._element.width(width);
 
 	//populate
@@ -178,11 +173,11 @@ Ruler.prototype._draw = function() {
 	
 	let ticks = Math.floor(width / this._targetSpacing);
 	let spacing = width / ticks;
-	let spacingSeconds = spacing / this._timeline._scale;
+	let spacingSeconds = spacing / this._timeline.data.scale;
 	spacingSeconds = Math.round(spacingSeconds);
 
 
-	for(let i = 0; spacingSeconds * i < this._timeline._duration ; i++) {
+	for(let i = 0; spacingSeconds * i < this._timeline.data.duration ; i++) {
 		let label = Number((spacingSeconds * i).toFixed(2));
 
 		new Marker(this._timeline, this._ticksElement, {
@@ -228,7 +223,7 @@ Marker.prototype._enableDrag = function() {
 };
 
 Marker.prototype._dragHandler = function(e, ui) {
-	this._time = round(ui.position.left / this._timeline._scale, 0.01);
+	this._time = round(ui.position.left / this._timeline.data.scale, 0.01);
 };
 
 function round(value, grid) {
@@ -236,7 +231,7 @@ function round(value, grid) {
 }
 
 Marker.prototype._draw = function() {
-	this._element.css("left", this._time * this._timeline._scale + "px");
+	this._element.css("left", this._time * this._timeline.data.scale + "px");
 };
 
 Marker.prototype.setTime = function(time) {
@@ -277,11 +272,11 @@ KeyFrame.prototype.getData = function() {
 };
 
 KeyFrame.prototype._dragHandler = function(e, ui) {
-	// this._time = ui.position.left / this._timeline._scale;
-	this._time = round(ui.position.left / this._timeline._scale, 0.1);
-	ui.position.left = this._time * this._timeline._scale;
+	// this._time = ui.position.left / this._timeline.data.scale;
+	this._time = round(ui.position.left / this._timeline.data.scale, 0.1);
+	ui.position.left = this._time * this._timeline.data.scale;
 
-	// console.log(ui.position.left / this._timeline._scale, 0.01, round(ui.position.left / this._timeline._scale, 0.01));
+	// console.log(ui.position.left / this._timeline.data.scale, 0.01, round(ui.position.left / this._timeline.data.scale, 0.01));
 
 	this._timeline.updateData();
 };
@@ -329,11 +324,11 @@ PlaybackHead.prototype.loadData = function(data = {}) {
 
 
 PlaybackHead.prototype._dragHandler = function(e, ui) {
-	this._time = ui.position.left / this._timeline._scale;
-	this._lineElement.css("left", this._time * this._timeline._scale + "px");
+	this._time = ui.position.left / this._timeline.data.scale;
+	this._lineElement.css("left", this._time * this._timeline.data.scale + "px");
 };
 
 PlaybackHead.prototype._draw = function() {
-	this._element.css("left", this._time * this._timeline._scale + "px");
-	this._lineElement.css("left", this._time * this._timeline._scale + "px");
+	this._element.css("left", this._time * this._timeline.data.scale + "px");
+	this._lineElement.css("left", this._time * this._timeline.data.scale + "px");
 };
