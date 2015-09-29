@@ -13,6 +13,29 @@ Timeline.prototype.loadData = function(data = {}) {
 		dataChanged: function(){}
 	});
 
+	this.data = data;
+	
+
+	this.jsonRactive = new Ractive({
+		el: '#json-container',
+		template: `{{JSON.stringify(data, null, " ")}}`,
+		data: {data: this.data},
+		magic: true
+	});
+
+	this.inspectorRactive = new Ractive({
+		el: '.inspector-container',
+		template: `#inspector-template`,
+		data: this,
+		magic: true
+	});
+
+	this.inspectorObserver = this.inspectorRactive.observe( 'activeKeyFrame.*', ()=>{
+		this.activeKeyFrame._draw && this.activeKeyFrame._draw()
+	});
+
+
+
 	this._time = data.time;
 	this._duration = data.duration;
 	this._scale = data.scale;
@@ -61,6 +84,11 @@ Timeline.prototype.updateData = function(){
 Timeline.prototype.setScale = function(scale) {
 	this._scale = scale;
 	this._draw();
+};
+
+Timeline.prototype.setActiveKeyFrame = function(keyFrame) {
+	console.log("saf", keyFrame);
+	this.activeKeyFrame = keyFrame;
 };
 
 Timeline.prototype._draw = function() {
@@ -200,8 +228,12 @@ Marker.prototype._enableDrag = function() {
 };
 
 Marker.prototype._dragHandler = function(e, ui) {
-	this._time = ui.position.left / this._timeline._scale;
+	this._time = round(ui.position.left / this._timeline._scale, 0.01);
 };
+
+function round(value, grid) {
+	return Number((Math.round(value/grid) * grid).toFixed(3));
+}
 
 Marker.prototype._draw = function() {
 	this._element.css("left", this._time * this._timeline._scale + "px");
@@ -230,7 +262,7 @@ KeyFrame.prototype.loadData = function(data = {}) {
 	Marker.prototype.loadData.call(this, data);
 	this._value = data.value;
 
-	this._element.on("mousedown", ()=>inspect(this));
+	this._element.on("mousedown", ()=>this._timeline.setActiveKeyFrame(this));
 
 	this.update = this.update.bind(this);
 };
@@ -245,7 +277,12 @@ KeyFrame.prototype.getData = function() {
 };
 
 KeyFrame.prototype._dragHandler = function(e, ui) {
-	this._time = ui.position.left / this._timeline._scale;
+	// this._time = ui.position.left / this._timeline._scale;
+	this._time = round(ui.position.left / this._timeline._scale, 0.1);
+	ui.position.left = this._time * this._timeline._scale;
+
+	// console.log(ui.position.left / this._timeline._scale, 0.01, round(ui.position.left / this._timeline._scale, 0.01));
+
 	this._timeline.updateData();
 };
 

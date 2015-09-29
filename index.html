@@ -8,9 +8,6 @@
 
 </head>
 <body>
-	 <div id='container'></div>
-
-
 	 <div class="timeline noselect">
 		<div class="track-legend"></div>
 		<div class="ruler-scroll"></div>
@@ -18,14 +15,20 @@
 		<div class="track-scroll"></div>
 		<input class="scale" type="range" value="100" min="10" max="100">
 	</div>
-	<div class="inspector-container">
-		<label>time</label>
-		<input name="time" rv-on-input="keyframe.update" rv-value="keyframe._time | number">
+	<div class="inspector-container"></div>
+		
+	
+
+	<script id='inspector-template' type='text/ractive'>
+    	<label>time</label>
+		<input name="time" value="{{activeKeyFrame._time}}">
 
 		<label>value</label>
-		<input name="value" rv-on-input="keyframe.update" rv-value="keyframe._value | number">
-	</div>
-	<div class="json-view"></div>
+		<input name="value" value="{{activeKeyFrame._value}}">
+  	</script>
+
+
+	<div id="json-container"></div>
 
 	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.js"></script>
 	<script type="text/javascript" src="lib/jquery-ui.js"></script>
