@@ -1,3 +1,6 @@
+////////////////////////////////////////////////////////////////////
+// Timeline
+
 export function Timeline(element, data = {}) {
 	console.log("Construct Timeline");
 	this._element = $(element);
@@ -62,21 +65,6 @@ Timeline.prototype.loadData = function(data = {}) {
 	this._draw();
 };
 
-// Timeline.prototype.updateData = function(){
-// 	let d = {
-// 		time: this._time,
-// 		duration: this._duration,
-// 		tracks: []
-// 	};
-
-// 	_.forEach(this._tracks,  (track)=> {
-// 		d.tracks.push(track.getData());
-// 	});
-
-	
-// };
-
-
 Timeline.prototype.setScale = function(scale) {
 	this.data.scale = scale;
 	this._draw();
@@ -95,8 +83,13 @@ Timeline.prototype._draw = function() {
 };
 
 
+
+
+////////////////////////////////////////////////////////////////////
+// Track
+
 function Track(timeline, data = {}) {
-	this._timeline = timeline;
+	this.timeline = timeline;
 	this.loadData(data);
 }
 
@@ -104,37 +97,21 @@ Track.prototype.loadData = function(data = {}) {
 	_.defaults(data, {
 		name: "unnamed",
 		keyFrames: [],
-		element: $('<div class="track"></div>'),
-		labelElement: $('<div class="track-label"></div>')
 	});
 
-	this._element = data.element;
-	this._timeline._element.find(".track-scroll").append(this._element);
+	this._element = $('<div class="track"></div>');
+	this.timeline._element.find(".track-scroll").append(this._element);
 
-	this._labelElement = data.labelElement;
-	this._timeline._element.find(".track-labels").append(this._labelElement);
+	this._labelElement = $('<div class="track-label"></div>');
+	this.timeline._element.find(".track-labels").append(this._labelElement);
 
 	this.setName(data.name);
 
 	this._keyFrames = [];
 	_.forEach(data.keyFrames, (keyFrameData) => {
-		let k = new KeyFrame(this._timeline, this._element, keyFrameData);
+		let k = new KeyFrame(this.timeline, this._element, keyFrameData);
 		this._keyFrames.push(k);
 	});
-};
-
-Track.prototype.getData = function() {
-	let data = {
-		name: this._name,
-		keyFrames: []
-	};
-
-	_.forEach(this._keyFrames,  (keyFrame) => {
-		data.keyFrames.push(keyFrame.getData());
-	});
-
-	return data;
-
 };
 
 Track.prototype.setName = function(name) {
@@ -143,54 +120,75 @@ Track.prototype.setName = function(name) {
 };
 
 Track.prototype._draw = function() {
-	this._element.width(this._timeline.data.duration * this._timeline.data.scale);
+	this._element.width(this.timeline.data.duration * this.timeline.data.scale);
 	this._keyFrames.forEach( function(k) {
 		k._draw();
 	});
 };
 
+// Track.prototype.getData = function() {
+// 	let data = {
+// 		name: this._name,
+// 		keyFrames: []
+// 	};
+
+// 	_.forEach(this._keyFrames,  (keyFrame) => {
+// 		data.keyFrames.push(keyFrame.getData());
+// 	});
+
+// 	return data;
+
+// };
+
+
+
+
+////////////////////////////////////////////////////////////////////
+// Ruler
 
 function Ruler(timeline) {
-	this._timeline = timeline;
+	this.timeline = timeline;
 
 	this._targetSpacing = 75;
 
 	this._element = $('<div class="ruler"></div>');
-	this._timeline._element.find(".ruler-scroll").append(this._element);
+	this.timeline._element.find(".ruler-scroll").append(this._element);
 	
 	this._ticksElement = $('<div class="ticks"></div>');
 	this._element.append(this._ticksElement);
 }
 
 Ruler.prototype._draw = function() {
-	let width = this._timeline.data.duration * this._timeline.data.scale;
+	let width = this.timeline.data.duration * this.timeline.data.scale;
 	this._element.width(width);
 
 	//populate
 	this._ticksElement.empty();
 
+	let tickCount = Math.floor(width / this._targetSpacing);
+	let tickSpacing = width / tickCount;
+	let tickSpacingSeconds = tickSpacing / this.timeline.data.scale;
+	tickSpacingSeconds = Math.round(tickSpacingSeconds);
+	if (tickSpacingSeconds < 1) {
+		tickSpacingSeconds = 1;
+	}
 
-	
-	let ticks = Math.floor(width / this._targetSpacing);
-	let spacing = width / ticks;
-	let spacingSeconds = spacing / this._timeline.data.scale;
-	spacingSeconds = Math.round(spacingSeconds);
+	for(let i = 0; tickSpacingSeconds * i < this.timeline.data.duration ; i++) {
+		let label = Number((tickSpacingSeconds * i).toFixed(2));
 
-
-	for(let i = 0; spacingSeconds * i < this._timeline.data.duration ; i++) {
-		let label = Number((spacingSeconds * i).toFixed(2));
-
-		new Marker(this._timeline, this._ticksElement, {
-			time: i * spacingSeconds,
+		new Marker(this.timeline, this._ticksElement, {
+			time: i * tickSpacingSeconds,
 			element: $('<div class="tick"></div>').text(label)
 		})._draw();
 	}	
 };
 
 
+////////////////////////////////////////////////////////////////////
+// Marker
 
 function Marker(timeline, parentElement, data = {}) {
-	this._timeline = timeline;
+	this.timeline = timeline;
 	this._parentElement = parentElement;
 	this.loadData(data);
 }
@@ -223,7 +221,7 @@ Marker.prototype._enableDrag = function() {
 };
 
 Marker.prototype._dragHandler = function(e, ui) {
-	this._time = round(ui.position.left / this._timeline.data.scale, 0.01);
+	this._time = round(ui.position.left / this.timeline.data.scale, 0.01);
 };
 
 function round(value, grid) {
@@ -231,7 +229,7 @@ function round(value, grid) {
 }
 
 Marker.prototype._draw = function() {
-	this._element.css("left", this._time * this._timeline.data.scale + "px");
+	this._element.css("left", this._time * this.timeline.data.scale + "px");
 };
 
 Marker.prototype.setTime = function(time) {
@@ -257,34 +255,34 @@ KeyFrame.prototype.loadData = function(data = {}) {
 	Marker.prototype.loadData.call(this, data);
 	this._value = data.value;
 
-	this._element.on("mousedown", ()=>this._timeline.setActiveKeyFrame(this));
+	this._element.on("mousedown", ()=>this.timeline.setActiveKeyFrame(this));
 
 	this.update = this.update.bind(this);
 };
 
-KeyFrame.prototype.getData = function() {
-	let data = {
-		value: this._value,
-		time: this._time
-	};
+// KeyFrame.prototype.getData = function() {
+// 	let data = {
+// 		value: this._value,
+// 		time: this._time
+// 	};
 
-	return data;
-};
+// 	return data;
+// };
 
 KeyFrame.prototype._dragHandler = function(e, ui) {
-	// this._time = ui.position.left / this._timeline.data.scale;
-	this._time = round(ui.position.left / this._timeline.data.scale, 0.1);
-	ui.position.left = this._time * this._timeline.data.scale;
+	// this._time = ui.position.left / this.timeline.data.scale;
+	this._time = round(ui.position.left / this.timeline.data.scale, 0.1);
+	ui.position.left = this._time * this.timeline.data.scale;
 
-	// console.log(ui.position.left / this._timeline.data.scale, 0.01, round(ui.position.left / this._timeline.data.scale, 0.01));
+	// console.log(ui.position.left / this.timeline.data.scale, 0.01, round(ui.position.left / this.timeline.data.scale, 0.01));
 
-	this._timeline.updateData();
+	// this.timeline.updateData();
 };
 
 KeyFrame.prototype.update = function() {
 	console.log("update", this._value, this);
 	this._draw();
-	this._timeline.updateData();
+	// this.timeline.updateData();
 };
 
 
@@ -319,16 +317,16 @@ PlaybackHead.prototype.loadData = function(data = {}) {
 	Marker.prototype.loadData.call(this, data);
 
 	this._lineElement = data.lineElement;
-	this._timeline._element.find(".track-scroll").append(this._lineElement);
+	this.timeline._element.find(".track-scroll").append(this._lineElement);
 };
 
 
 PlaybackHead.prototype._dragHandler = function(e, ui) {
-	this._time = ui.position.left / this._timeline.data.scale;
-	this._lineElement.css("left", this._time * this._timeline.data.scale + "px");
+	this._time = ui.position.left / this.timeline.data.scale;
+	this._lineElement.css("left", this._time * this.timeline.data.scale + "px");
 };
 
 PlaybackHead.prototype._draw = function() {
-	this._element.css("left", this._time * this._timeline.data.scale + "px");
-	this._lineElement.css("left", this._time * this._timeline.data.scale + "px");
+	this._element.css("left", this._time * this.timeline.data.scale + "px");
+	this._lineElement.css("left", this._time * this.timeline.data.scale + "px");
 };
