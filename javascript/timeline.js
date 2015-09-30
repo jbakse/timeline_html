@@ -1,6 +1,3 @@
-////////////////////////////////////////////////////////////////////
-// Timeline
-
 export function Timeline(element, data = {}) {
 	console.log("Construct Timeline");
 	this._element = $(element);
@@ -21,9 +18,14 @@ Timeline.prototype.loadData = function(data = {}) {
 	this.jsonRactive = new Ractive({
 		el: '#json-container',
 		template: `{{JSON.stringify(data, null, " ")}}`,
-		data: {data: this.data},
+		data: {data: this.data}, /* isolate on data property so output not poluted with ractive attached fields */
 		magic: true
 	});
+	
+	// force json to notice changes to keyframes
+	this.jsonObserver = this.jsonRactive.observe( 'data.tracks.*.keyFrames.*.*', ()=>{});
+
+// {{data.tracks[0].keyFrames[0].time}}
 
 	this.inspectorRactive = new Ractive({
 		el: '.inspector-container',
@@ -71,7 +73,9 @@ Timeline.prototype.setScale = function(scale) {
 };
 
 Timeline.prototype.setActiveKeyFrame = function(keyFrame) {
+	console.log(this.data);
 	this.activeKeyFrame = keyFrame;
+	//this.jsonRactive.update();
 };
 
 Timeline.prototype._draw = function() {
@@ -159,6 +163,7 @@ function Ruler(timeline) {
 }
 
 Ruler.prototype._draw = function() {
+
 	let width = this.timeline.data.duration * this.timeline.data.scale;
 	this._element.width(width);
 
@@ -178,6 +183,7 @@ Ruler.prototype._draw = function() {
 
 		new Marker(this.timeline, this._ticksElement, {
 			time: i * tickSpacingSeconds,
+		}, {
 			element: $('<div class="tick"></div>').text(label)
 		})._draw();
 	}	
@@ -187,27 +193,35 @@ Ruler.prototype._draw = function() {
 ////////////////////////////////////////////////////////////////////
 // Marker
 
-function Marker(timeline, parentElement, data = {}) {
+function Marker(timeline, parentElement, data = {}, options = {}) {
 	this.timeline = timeline;
 	this._parentElement = parentElement;
 	this.loadData(data);
+	this.loadOptions(options);
 }
 
 Marker.prototype.loadData = function(data = {}) {
 	_.defaults(data, {
 		time: 0,
-		element: $('<div class="key-frame"></div>'),
-		locked: true
 	});
 	
-	this._time = data.time;
-	this._element = data.element;
+	this.data = data;
+};
+
+Marker.prototype.loadOptions = function(options = {}) {
+	_.defaults(options, {
+		element: $('<div class="marker"></div>'),
+		locked: true
+	});
+
+	this._element = options.element;
 	this._parentElement.append(this._element);
 
-	if (!data.locked) {
+	if (!options.locked) {
 		this._enableDrag();
 	}
 };
+
 
 Marker.prototype._enableDrag = function() {
 	this._element.draggable({
@@ -221,26 +235,22 @@ Marker.prototype._enableDrag = function() {
 };
 
 Marker.prototype._dragHandler = function(e, ui) {
-	this._time = round(ui.position.left / this.timeline.data.scale, 0.01);
+	this.data.time = round(ui.position.left / this.timeline.data.scale, 0.01);
 };
 
-function round(value, grid) {
-	return Number((Math.round(value/grid) * grid).toFixed(3));
-}
-
 Marker.prototype._draw = function() {
-	this._element.css("left", this._time * this.timeline.data.scale + "px");
+	this._element.css("left", this.data.time * this.timeline.data.scale + "px");
 };
 
 Marker.prototype.setTime = function(time) {
-	this._time = time;
+	this.data.time = time;
 	this._draw();
 };
 
 
 
-function KeyFrame(timeline, parentElement, data = {}) {
-	Marker.call(this, timeline, parentElement, data);
+function KeyFrame(timeline, parentElement, data = {}, options = {}) {
+	Marker.call(this, timeline, parentElement, data, options);
 }
 
 KeyFrame.prototype = Object.create(Marker.prototype);
@@ -249,16 +259,26 @@ KeyFrame.prototype.constructor = KeyFrame;
 KeyFrame.prototype.loadData = function(data = {}) {
 	_.defaults(data, {
 		value: 0,
-		locked: false
 	});
 
 	Marker.prototype.loadData.call(this, data);
 	this._value = data.value;
 
-	this._element.on("mousedown", ()=>this.timeline.setActiveKeyFrame(this));
+	
 
 	this.update = this.update.bind(this);
 };
+
+KeyFrame.prototype.loadOptions = function(options = {}) {
+	_.defaults(options, {
+		locked: false,
+		element: $('<div class="key-frame"></div>')
+	});
+
+	Marker.prototype.loadOptions.call(this, options);
+	this._element.on("mousedown", ()=>this.timeline.setActiveKeyFrame(this));
+};
+
 
 // KeyFrame.prototype.getData = function() {
 // 	let data = {
@@ -271,14 +291,16 @@ KeyFrame.prototype.loadData = function(data = {}) {
 
 KeyFrame.prototype._dragHandler = function(e, ui) {
 	// this._time = ui.position.left / this.timeline.data.scale;
-	this._time = round(ui.position.left / this.timeline.data.scale, 0.1);
-	ui.position.left = this._time * this.timeline.data.scale;
+	this.data.time = round(ui.position.left / this.timeline.data.scale, 0.1);
+	ui.position.left = this.data.time * this.timeline.data.scale;
 
 	// console.log(ui.position.left / this.timeline.data.scale, 0.01, round(ui.position.left / this.timeline.data.scale, 0.01));
 
 	// this.timeline.updateData();
 };
 
+
+// @todo: who is calling this?
 KeyFrame.prototype.update = function() {
 	console.log("update", this._value, this);
 	this._draw();
@@ -287,36 +309,46 @@ KeyFrame.prototype.update = function() {
 
 
 
-function inspect(keyframe) {
-	console.log("rivets", rivets, $(".inspector-container"), keyframe);
-	if (!inspect.once) {
-		inspect.data = {};
-		inspect.data.keyframe = keyframe;
-		rivets.bind($(".inspector-container")[0], inspect.data);
-	}
-	inspect.data.keyframe = keyframe;
-	inspect.once = true;
-}
+// function inspect(keyframe) {
+// 	console.log("rivets", rivets, $(".inspector-container"), keyframe);
+// 	if (!inspect.once) {
+// 		inspect.data = {};
+// 		inspect.data.keyframe = keyframe;
+// 		rivets.bind($(".inspector-container")[0], inspect.data);
+// 	}
+// 	inspect.data.keyframe = keyframe;
+// 	inspect.once = true;
+// }
 
 
-function PlaybackHead(timeline, data = {}) {
+function PlaybackHead(timeline, data = {}, options = {}) {
 	let parentElement = timeline._element.find(".ruler");
-	Marker.call(this, timeline, parentElement, data);
+	Marker.call(this, timeline, parentElement, data, options);
 }
 
 PlaybackHead.prototype = Object.create(Marker.prototype);
 PlaybackHead.prototype.constructor = PlaybackHead;
 
 PlaybackHead.prototype.loadData = function(data = {}) {
-	_.defaults(data, {
+	_.defaults(data, {});
+
+	Marker.prototype.loadData.call(this, data);
+
+	this._lineElement = data.lineElement;
+	this.timeline._element.find(".track-scroll").append(this._lineElement);
+};
+
+
+PlaybackHead.prototype.loadOptions = function(options = {}) {
+	_.defaults(options, {
 		element: $('<div class="playback-head"></div>'),
 		lineElement: $('<div class="playback-line"></div>'),
 		locked: false
 	});
 
-	Marker.prototype.loadData.call(this, data);
+	Marker.prototype.loadOptions.call(this, options);
 
-	this._lineElement = data.lineElement;
+	this._lineElement = options.lineElement;
 	this.timeline._element.find(".track-scroll").append(this._lineElement);
 };
 
@@ -330,3 +362,8 @@ PlaybackHead.prototype._draw = function() {
 	this._element.css("left", this._time * this.timeline.data.scale + "px");
 	this._lineElement.css("left", this._time * this.timeline.data.scale + "px");
 };
+
+
+function round(value, grid) {
+	return Number((Math.round(value/grid) * grid).toFixed(3));
+}
