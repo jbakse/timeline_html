@@ -14,6 +14,12 @@ Timeline.prototype.loadData = function(data = {}) {
 
 	this.data = data;
 	
+	this.data.tracks.forEach( function(track) {
+		track.keyFrames.sort( function compare(a, b) {
+			return a.time < b.time ? -1 : 1;
+		});
+	});
+
 
 	this.jsonRactive = new Ractive({
 		el: '#json-container',
@@ -29,7 +35,7 @@ Timeline.prototype.loadData = function(data = {}) {
 
 	this.inspectorRactive = new Ractive({
 		el: '.inspector-container',
-		template: `#inspector-template`,
+		template: '#inspector-template',
 		data: this,
 		magic: true
 	});
@@ -37,6 +43,49 @@ Timeline.prototype.loadData = function(data = {}) {
 	this.inspectorObserver = this.inspectorRactive.observe( 'activeKeyFrame.*', ()=>{
 		if (this.activeKeyFrame._draw) { this.activeKeyFrame._draw(); }
 	});
+
+	var trackValueAtTime = function(track, time){
+		console.log("calc");
+		let i = 0;
+		let value = undefined;
+
+		if (track.keyFrames.length === 0) {
+			return undefined;
+		}
+		
+
+
+
+		while(i < track.keyFrames.length && track.keyFrames[i].time < time) {
+			i++;
+		}
+
+		if (i === 0) {
+			value = track.keyFrames[0].value;
+		}
+		else if (i === track.keyFrames.length) {
+			value = track.keyFrames[track.keyFrames.length-1].value;
+		}
+		else {
+			let n = (time - track.keyFrames[i-1].time) / (track.keyFrames[i].time -  track.keyFrames[i-1].time);
+			value = track.keyFrames[i-1].value + n * (track.keyFrames[i].value -  track.keyFrames[i-1].value);
+		}
+		return round(value, .01);
+	};
+
+
+	// i was working here
+	this.trackLabelsRactive = new Ractive({
+		el: '.track-labels',
+		template: '#track-labels-template',
+		data: {
+			calculate: trackValueAtTime,
+			data: this.data
+		},
+		magic: true
+	});
+	console.log("tlr", this.trackLabelsRactive);
+
 
 	this._tracks = [];
 
@@ -66,6 +115,9 @@ Timeline.prototype.loadData = function(data = {}) {
 	// this.updateData();
 	this._draw();
 };
+
+
+
 
 Timeline.prototype.setScale = function(scale) {
 	this.data.scale = scale;
@@ -103,17 +155,18 @@ Track.prototype.loadData = function(data = {}) {
 		keyFrames: [],
 	});
 
+	this.data = data;
 	this._element = $('<div class="track"></div>');
 	this.timeline._element.find(".track-scroll").append(this._element);
 
-	this._labelElement = $('<div class="track-label"></div>');
-	this.timeline._element.find(".track-labels").append(this._labelElement);
+	// this._labelElement = $('<div class="track-label"></div>');
+	// this.timeline._element.find(".track-labels").append(this._labelElement);
 
-	this.setName(data.name);
+	// this.setName(data.name);
 
 	this._keyFrames = [];
 	_.forEach(data.keyFrames, (keyFrameData) => {
-		let k = new KeyFrame(this.timeline, this._element, keyFrameData);
+		let k = new KeyFrame(this.timeline, this, keyFrameData);
 		this._keyFrames.push(k);
 	});
 };
@@ -249,8 +302,9 @@ Marker.prototype.setTime = function(time) {
 
 
 
-function KeyFrame(timeline, parentElement, data = {}, options = {}) {
-	Marker.call(this, timeline, parentElement, data, options);
+function KeyFrame(timeline, track, data = {}, options = {}) {
+	Marker.call(this, timeline, track._element, data, options);
+	this.track = track;
 }
 
 KeyFrame.prototype = Object.create(Marker.prototype);
@@ -293,7 +347,11 @@ KeyFrame.prototype._dragHandler = function(e, ui) {
 	// this._time = ui.position.left / this.timeline.data.scale;
 	this.data.time = round(ui.position.left / this.timeline.data.scale, 0.1);
 	ui.position.left = this.data.time * this.timeline.data.scale;
+	
 
+	this.track.data.keyFrames.sort( function compare(a, b) {
+		return a.time < b.time ? -1 : 1;
+	});
 	// console.log(ui.position.left / this.timeline.data.scale, 0.01, round(ui.position.left / this.timeline.data.scale, 0.01));
 
 	// this.timeline.updateData();
@@ -354,13 +412,13 @@ PlaybackHead.prototype.loadOptions = function(options = {}) {
 
 
 PlaybackHead.prototype._dragHandler = function(e, ui) {
-	this._time = ui.position.left / this.timeline.data.scale;
-	this._lineElement.css("left", this._time * this.timeline.data.scale + "px");
+	this.timeline.data.time = ui.position.left / this.timeline.data.scale;
+	this._lineElement.css("left", this.timeline.data.time * this.timeline.data.scale + "px");
 };
 
 PlaybackHead.prototype._draw = function() {
-	this._element.css("left", this._time * this.timeline.data.scale + "px");
-	this._lineElement.css("left", this._time * this.timeline.data.scale + "px");
+	this._element.css("left", this.timeline.data.time * this.timeline.data.scale + "px");
+	this._lineElement.css("left", this.timeline.data.time * this.timeline.data.scale + "px");
 };
 
 

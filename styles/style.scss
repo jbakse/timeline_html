@@ -157,6 +157,14 @@ body
 	background: #333;
 	color: #AAA;
 }
+
+.track-label .value
+{
+	// border: 1px solid red;
+	float: right;
+	margin-right: 10px;
+	width: 80px;
+}
 .track 
 {
 	height:$track-height;

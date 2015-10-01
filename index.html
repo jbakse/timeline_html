@@ -17,7 +17,15 @@
 	</div>
 	<div class="inspector-container"></div>
 		
-	
+	<script id='track-labels-template' type='text/ractive'>
+		{{#each data.tracks}}
+			<div class="track-label">
+				<span class="name">{{name}}</span>
+				<span class="value">{{calculate(this, data.time)}}</span>
+			</div>
+		{{/each}}
+  	</script>
+
 
 	<script id='inspector-template' type='text/ractive'>
     	<label>time</label>

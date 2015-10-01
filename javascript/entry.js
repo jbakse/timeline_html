@@ -7,7 +7,7 @@ function main() {
 	console.clear();
 
 
-	// data = injectTestData(data);
+	data = injectTestData(data);
 	main_js();
 	
 }
@@ -44,13 +44,17 @@ let data = {
 			value: 10
 		}, {
 			time: 2,
-			value: 5
+			value: 20
 		}, {
 			time: 3,
-			value: 2
+			value: 10
 		}]
 	}, {
-		name: "rotation"
+		name: "rotation",
+		keyFrames: [{
+			time: 1,
+			value: 12.4433
+		}]
 	}]
 };
 
@@ -62,7 +66,7 @@ function injectTestData(data) {
 			name: "unnamed",
 			keyFrames: []
 		};
-		for (let k = 0; k < 100; k++) {
+		for (let k = 0; k < 20; k++) {
 			tData.keyFrames.push({
 				time: Math.random() * 10,
 				value: Math.random() * 10
