@@ -1,11 +1,22 @@
++---- Move all timeline parts into one div for the timeline wiget (the timeline + inspector)
+
++---- Organize the ractive data supply keep document data on "data", keep other things like current time, active selections etc on root
+
+---- Should we just bring the loadData, loadOpts under the constructor. Maybe? Maybe Not? Downside is that subclasses might have to reimplement entire constructor? Might work best if the defaults are stored as obj on prototype?
+
+
 Refactor
 ----	Seperate rethink load data. We have two classes of data runtime confguration and the actual "document" data. element, locked, and so forth are config, time and value are document data. 
 
 ----	Using _ for private members everywhere, but nothing is really respecting that. Clean it up to be respected or maybe just remove the _
 
+----	pull the json view out of timeline
 
 
-Notes
+
+Conventions
+
+the .options member holds the initialization configuration options, instances shouldn't copy these out into sperate member variables 
 
 the .data member holds a reference to the part of the document the instance is controlling
-the options are 
+the options are (e.g. track instance[x]'s .data is  data.track[x])

@@ -5,26 +5,13 @@ $(main);
 
 function main() {
 	console.clear();
-
+	console.log("Hello, Timeline!");
 
 	data = injectTestData(data);
-	main_js();
-	
-}
-
-
-
-
-
-
-function main_js() {
-	console.clear();
-	console.log("Hello.");
 
 	$(".timeline").each(function AttachTimeline() {
 		let t = new Timeline(this, data);
 	});
-
 }
 
 

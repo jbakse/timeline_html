@@ -18,21 +18,27 @@ body
 .timeline
 {
 	background: transparent;
-	position: relative;
+	
 
 	margin: 30px;
 	// cursor: default;
 }
 
-.inspector-container
+.timeline .editor
+{
+	position: relative;
+	background-color: rgba(0, 0, 0, .2);
+}
+
+.inspector
 {
 	color: white;
-	margin: 30px;
+	margin: 30px 0;
 	background-color: #333;
 	padding: 10px;
 }
 
-.inspector-container input
+.inspector input
 {
 	background-color: black;
 	color: #AAA;
@@ -41,7 +47,7 @@ body
 	font-size: 14px;
 }
 
-.inspector-container input:focus
+.inspector input:focus
 {
 	border: 1px solid #99B;
 	outline: none;

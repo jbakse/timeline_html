@@ -4,6 +4,37 @@ export function Timeline(element, data = {}) {
 	this.loadData(data);
 }
 
+
+var trackValueAtTime = function(track, time) {
+
+	let i = 0;
+	let value;
+
+	if (track.keyFrames.length === 0) {
+		return undefined;
+	}
+
+
+
+	while (i < track.keyFrames.length && track.keyFrames[i].time < time) {
+		i++;
+	}
+
+	if (i === 0) {
+		value = track.keyFrames[0].value;
+	}
+	else if (i === track.keyFrames.length) {
+		value = track.keyFrames[track.keyFrames.length - 1].value;
+	}
+	else {
+		let n = (time - track.keyFrames[i - 1].time) / (track.keyFrames[i].time - track.keyFrames[i - 1].time);
+		value = track.keyFrames[i - 1].value + n * (track.keyFrames[i].value - track.keyFrames[i - 1].value);
+	}
+	return round(value, 0.01);
+};
+
+
+
 Timeline.prototype.loadData = function(data = {}) {
 	_.defaults(data, {
 		time: 0,
@@ -13,9 +44,15 @@ Timeline.prototype.loadData = function(data = {}) {
 	});
 
 	this.data = data;
-	
-	this.data.tracks.forEach( function(track) {
-		track.keyFrames.sort( function compare(a, b) {
+	this.ractiveData = {
+		data: this.data,
+		trackValueAtTime: trackValueAtTime,
+		activeKeyFrame: undefined
+	};
+
+
+	this.data.tracks.forEach(function(track) {
+		track.keyFrames.sort(function compare(a, b) {
 			return a.time < b.time ? -1 : 1;
 		});
 	});
@@ -24,64 +61,36 @@ Timeline.prototype.loadData = function(data = {}) {
 	this.jsonRactive = new Ractive({
 		el: '#json-container',
 		template: `{{JSON.stringify(data, null, " ")}}`,
-		data: {data: this.data}, /* isolate on data property so output not poluted with ractive attached fields */
+		data: this.ractiveData,
+		/* isolate on data property so output not poluted with ractive attached fields */
 		magic: true
 	});
-	
-	// force json to notice changes to keyframes
-	this.jsonObserver = this.jsonRactive.observe( 'data.tracks.*.keyFrames.*.*', ()=>{});
 
-// {{data.tracks[0].keyFrames[0].time}}
+	// force json to notice changes to keyframes
+	this.jsonObserver = this.jsonRactive.observe('data.tracks.*.keyFrames.*.*', () => {});
+
+	// {{data.tracks[0].keyFrames[0].time}}
 
 	this.inspectorRactive = new Ractive({
-		el: '.inspector-container',
+		el: this._element.find('.inspector'),
 		template: '#inspector-template',
-		data: this,
+		data: this.ractiveData,
 		magic: true
 	});
 
-	this.inspectorObserver = this.inspectorRactive.observe( 'activeKeyFrame.*', ()=>{
-		if (this.activeKeyFrame._draw) { this.activeKeyFrame._draw(); }
+	this.inspectorObserver = this.inspectorRactive.observe('activeKeyFrame.*', () => {
+		if (this.ractiveData.activeKeyFrame._draw) {
+			this.ractiveData.activeKeyFrame._draw();
+		}
 	});
 
-	var trackValueAtTime = function(track, time){
-		console.log("calc");
-		let i = 0;
-		let value = undefined;
-
-		if (track.keyFrames.length === 0) {
-			return undefined;
-		}
-		
-
-
-
-		while(i < track.keyFrames.length && track.keyFrames[i].time < time) {
-			i++;
-		}
-
-		if (i === 0) {
-			value = track.keyFrames[0].value;
-		}
-		else if (i === track.keyFrames.length) {
-			value = track.keyFrames[track.keyFrames.length-1].value;
-		}
-		else {
-			let n = (time - track.keyFrames[i-1].time) / (track.keyFrames[i].time -  track.keyFrames[i-1].time);
-			value = track.keyFrames[i-1].value + n * (track.keyFrames[i].value -  track.keyFrames[i-1].value);
-		}
-		return round(value, .01);
-	};
 
 
 	// i was working here
 	this.trackLabelsRactive = new Ractive({
-		el: '.track-labels',
+		el: this._element.find('.track-labels'),
 		template: '#track-labels-template',
-		data: {
-			calculate: trackValueAtTime,
-			data: this.data
-		},
+		data: this.ractiveData,
 		magic: true
 	});
 	console.log("tlr", this.trackLabelsRactive);
@@ -91,31 +100,31 @@ Timeline.prototype.loadData = function(data = {}) {
 
 
 	_.forEach(data.tracks, (trackData) => {
-			let t = new Track(this, trackData);
-			this._tracks.push(t);
-		}
-	);
+		let t = new Track(this, trackData);
+		this._tracks.push(t);
+	});
 
 	this._ruler = new Ruler(this);
-	this._playbackHead = new PlaybackHead(this, {time: 1});
-	
+	this._playbackHead = new PlaybackHead(this, {
+		time: 1
+	});
+
 	// scale slider
 	let that = this;
 	this._slider = this._element.find(".scale");
 	this._slider.val(data.scale);
 	this._slider.on("input", function() {
 		that.setScale($(this).val());
-	} );
+	});
 
 	// syncronize scrolling
-	this._element.find(".track-scroll").scroll( (e) => {
+	this._element.find(".track-scroll").scroll((e) => {
 		this._element.find(".track-labels").scrollTop(this._element.find(".track-scroll").scrollTop());
 		this._element.find(".ruler-scroll").scrollLeft(this._element.find(".track-scroll").scrollLeft());
 	});
 	// this.updateData();
 	this._draw();
 };
-
 
 
 
@@ -126,18 +135,17 @@ Timeline.prototype.setScale = function(scale) {
 
 Timeline.prototype.setActiveKeyFrame = function(keyFrame) {
 	console.log(this.data);
-	this.activeKeyFrame = keyFrame;
+	this.ractiveData.activeKeyFrame = keyFrame;
 	//this.jsonRactive.update();
 };
 
 Timeline.prototype._draw = function() {
 	this._ruler._draw();
 	this._playbackHead._draw();
-	this._tracks.forEach( function(t) {
+	this._tracks.forEach(function(t) {
 		t._draw();
 	});
 };
-
 
 
 
@@ -178,7 +186,7 @@ Track.prototype.setName = function(name) {
 
 Track.prototype._draw = function() {
 	this._element.width(this.timeline.data.duration * this.timeline.data.scale);
-	this._keyFrames.forEach( function(k) {
+	this._keyFrames.forEach(function(k) {
 		k._draw();
 	});
 };
@@ -199,7 +207,6 @@ Track.prototype._draw = function() {
 
 
 
-
 ////////////////////////////////////////////////////////////////////
 // Ruler
 
@@ -210,7 +217,7 @@ function Ruler(timeline) {
 
 	this._element = $('<div class="ruler"></div>');
 	this.timeline._element.find(".ruler-scroll").append(this._element);
-	
+
 	this._ticksElement = $('<div class="ticks"></div>');
 	this._element.append(this._ticksElement);
 }
@@ -231,7 +238,7 @@ Ruler.prototype._draw = function() {
 		tickSpacingSeconds = 1;
 	}
 
-	for(let i = 0; tickSpacingSeconds * i < this.timeline.data.duration ; i++) {
+	for (let i = 0; tickSpacingSeconds * i < this.timeline.data.duration; i++) {
 		let label = Number((tickSpacingSeconds * i).toFixed(2));
 
 		new Marker(this.timeline, this._ticksElement, {
@@ -239,7 +246,7 @@ Ruler.prototype._draw = function() {
 		}, {
 			element: $('<div class="tick"></div>').text(label)
 		})._draw();
-	}	
+	}
 };
 
 
@@ -257,7 +264,7 @@ Marker.prototype.loadData = function(data = {}) {
 	_.defaults(data, {
 		time: 0,
 	});
-	
+
 	this.data = data;
 };
 
@@ -318,7 +325,7 @@ KeyFrame.prototype.loadData = function(data = {}) {
 	Marker.prototype.loadData.call(this, data);
 	this._value = data.value;
 
-	
+
 
 	this.update = this.update.bind(this);
 };
@@ -330,7 +337,7 @@ KeyFrame.prototype.loadOptions = function(options = {}) {
 	});
 
 	Marker.prototype.loadOptions.call(this, options);
-	this._element.on("mousedown", ()=>this.timeline.setActiveKeyFrame(this));
+	this._element.on("mousedown", () => this.timeline.setActiveKeyFrame(this));
 };
 
 
@@ -347,9 +354,9 @@ KeyFrame.prototype._dragHandler = function(e, ui) {
 	// this._time = ui.position.left / this.timeline.data.scale;
 	this.data.time = round(ui.position.left / this.timeline.data.scale, 0.1);
 	ui.position.left = this.data.time * this.timeline.data.scale;
-	
 
-	this.track.data.keyFrames.sort( function compare(a, b) {
+
+	this.track.data.keyFrames.sort(function compare(a, b) {
 		return a.time < b.time ? -1 : 1;
 	});
 	// console.log(ui.position.left / this.timeline.data.scale, 0.01, round(ui.position.left / this.timeline.data.scale, 0.01));
@@ -423,5 +430,5 @@ PlaybackHead.prototype._draw = function() {
 
 
 function round(value, grid) {
-	return Number((Math.round(value/grid) * grid).toFixed(3));
+	return Number((Math.round(value / grid) * grid).toFixed(3));
 }
