@@ -8,7 +8,8 @@ module.exports = {
         loaders: [
             { test: /\.scss$/, loader: "style!css!autoprefixer-loader!sass" },
             { test: /\.css$/, loader: "style!css" },
-            { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader"}
+            { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader"},
+            { test: /\.(png|jpg|svg)$/, loader: 'url?limit=25000'}
         ]
     }
 };

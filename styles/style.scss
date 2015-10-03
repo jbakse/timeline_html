@@ -171,6 +171,7 @@ body
 	margin-right: 10px;
 	width: 80px;
 }
+
 .track 
 {
 	height:$track-height;
@@ -178,9 +179,6 @@ body
 	// width: 2000px;
 	background: #555;	
 	position: relative;
-
-
-
 }
 
 .key-frame
@@ -196,6 +194,31 @@ body
 	background: #222;
 
 	// cursor: grab;
+}
+
+.tween-bar
+{
+	position: absolute;
+	box-sizing: border-box;
+	
+
+	width: $key-frame-width;
+	height: $track-height;
+	
+	border-width: 0 7px;
+
+	// using png, svg is a little slow
+	// border-image-source: url(images/tween_arrow.svg);
+	// border-image-slice: 0 33% fill;
+
+	border-image-source: url(images/tween_arrow_gray_2x.png);
+	border-image-slice: 0 14 fill;
+
+
+}
+.tween-bar.small
+{
+	border-width: 0;
 }
 
 .scale {

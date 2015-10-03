@@ -23,18 +23,17 @@ function main() {
 
 let data = {
 	duration: 15,
-	scale: 50,
 	tracks: [{
 		name: "position_x",
 		keyFrames: [{
 			time: 1,
 			value: 10
 		}, {
-			time: 2,
-			value: 20
-		}, {
 			time: 3,
 			value: 10
+		}, {
+			time: 2,
+			value: 20
 		}]
 	}, {
 		name: "rotation",

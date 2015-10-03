@@ -4,15 +4,27 @@
 
 ---- Should we just bring the loadData, loadOpts under the constructor. Maybe? Maybe Not? Downside is that subclasses might have to reimplement entire constructor? Might work best if the defaults are stored as obj on prototype?
 
+Code Review
+---- Timeline
++---- Track
++---- Ruler
++---- Marker
++---- KeyFrame
++---- PlaybackHead
 
 Refactor
+
+----	keep _elements and other things in .options? : how does jquery paper etc do this, do they copy the options into the class
+
+----	_ method names, should they be underscored... should keyframe _draw be?
+
 ----	Seperate rethink load data. We have two classes of data runtime confguration and the actual "document" data. element, locked, and so forth are config, time and value are document data. 
 
 ----	Using _ for private members everywhere, but nothing is really respecting that. Clean it up to be respected or maybe just remove the _
 
 ----	pull the json view out of timeline
 
-
+----	roundTo's should use a centralized grid (timeline.ractiveData.grid)
 
 Conventions
 

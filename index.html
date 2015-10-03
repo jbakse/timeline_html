@@ -17,7 +17,7 @@
 			<div class="ruler-scroll"></div>
 			<div class="track-labels"></div>
 			<div class="track-scroll"></div>
-			<input class="scale" type="range" value="100" min="10" max="400">
+			<input class="scale" type="range" value="100" min="20" max="500">
 		</div>
 
 		<div class="inspector"></div>
@@ -31,7 +31,7 @@
 		{{#each data.tracks}}
 		<div class="track-label">
 			<span class="name">{{name}}</span>
-			<span class="value">{{trackValueAtTime(this, data.time)}}</span>
+			<span class="value">{{trackValueAtTime(this, time)}}</span>
 		</div>
 		{{/each}}
 	</script>

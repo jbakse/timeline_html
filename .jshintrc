@@ -1,3 +1,5 @@
 {
-	"esnext": true
+	"esnext": true,
+	"devel": true,
+	"predef": ["$", "_", "Ractive"]
 }
