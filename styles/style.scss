@@ -227,6 +227,12 @@ body
 	border-width: 0;
 }
 
+.tween-bar.none {
+	display: none;
+}
+
+.tween-bar.linear {}
+
 .scale {
 	position: absolute;
 	left: 0;

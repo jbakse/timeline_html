@@ -317,6 +317,7 @@ KeyFrame.prototype.constructor = KeyFrame;
 KeyFrame.prototype.loadData = function(data = {}) {
 	_.defaults(data, {
 		value: 0,
+		tween: "linear"
 	});
 	Marker.prototype.loadData.call(this, data);
 };
@@ -333,7 +334,7 @@ KeyFrame.prototype.loadOptions = function(options = {}) {
 	this._parentElement.append(this._tweenElement);
 
 	this._element.on("mousedown", () => {
-		this.timeline.setActiveKeyFrame(this)
+		this.timeline.setActiveKeyFrame(this);
 	});
 };
 
@@ -359,11 +360,14 @@ KeyFrame.prototype._draw = function() {
 	this._element.css("left", position + "px");
 	this._tweenElement.css("left", position + 10 + "px");
 	this._tweenElement.css("width", endPosition - position - 12 + "px");
+	
 	if (endPosition - position - 12 < 14) {
 		this._tweenElement.addClass("small");
 	} else {
 		this._tweenElement.removeClass("small");
 	}
+
+	this._tweenElement.removeClass("none linear").addClass(this.data.tween);
 
 	this._element.appendTo(this._parentElement);
 };
