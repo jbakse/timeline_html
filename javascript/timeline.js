@@ -56,6 +56,7 @@ Timeline.prototype.loadData = function(data = {}) {
 	});
 
 
+
 	//
 	// labels view
 
@@ -65,7 +66,7 @@ Timeline.prototype.loadData = function(data = {}) {
 		data: this.ractiveData,
 		magic: true
 	});
-
+	this.trackLabelObserver = this.trackLabelsRactive.observe('data.tracks.*.keyFrames.*.*', () => {});
 
 	//
 	// track controllers
@@ -190,9 +191,13 @@ Track.trackValueAtTime = function(track, time) {
 	}
 	else {
 		// time between keyframes, interpolate
-		value = map(time, 
-			track.keyFrames[leftIndex].time, track.keyFrames[rightIndex].time,
-			track.keyFrames[leftIndex].value, track.keyFrames[rightIndex].value);
+		if (track.keyFrames[leftIndex].tween == "linear") {
+			value = map(time,
+				track.keyFrames[leftIndex].time, track.keyFrames[rightIndex].time,
+				track.keyFrames[leftIndex].value, track.keyFrames[rightIndex].value);
+		} else {
+			value = track.keyFrames[leftIndex].value;
+		} 
 	}
 
 	return roundTo(value, 0.01);
