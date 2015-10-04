@@ -191,9 +191,15 @@ body
 	height: $track-height;
 	
 	border: 1px solid #777;
-	background: #222;
+	background: #333;
 
 	// cursor: grab;
+}
+
+.key-frame.active
+{
+	background-color: black;
+	border-color: white;
 }
 
 .tween-bar

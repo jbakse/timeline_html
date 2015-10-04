@@ -117,6 +117,8 @@ Timeline.prototype.setScale = function(scale) {
 
 Timeline.prototype.setActiveKeyFrame = function(keyFrame) {
 	this.ractiveData.activeKeyFrame = keyFrame;
+	this._element.find(".key-frame").removeClass("active");
+	keyFrame._element.addClass("active");
 };
 
 Timeline.prototype._draw = function() {
@@ -157,6 +159,7 @@ Track.prototype._draw = function() {
 
 Track.prototype.sort = function() {
 	this.data.keyFrames =  _.sortBy(this.data.keyFrames, 'time');
+	this._keyFrames =  _.sortBy(this._keyFrames, 'data.time');
 };
 
 
@@ -329,7 +332,9 @@ KeyFrame.prototype.loadOptions = function(options = {}) {
 	this._tweenElement = options.tweenElement;
 	this._parentElement.append(this._tweenElement);
 
-	this._element.on("mousedown", () => this.timeline.setActiveKeyFrame(this));
+	this._element.on("mousedown", () => {
+		this.timeline.setActiveKeyFrame(this)
+	});
 };
 
 KeyFrame.prototype._dragHandler = function(e, ui) {
@@ -359,6 +364,8 @@ KeyFrame.prototype._draw = function() {
 	} else {
 		this._tweenElement.removeClass("small");
 	}
+
+	this._element.appendTo(this._parentElement);
 };
 
 
