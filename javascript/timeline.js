@@ -12,7 +12,6 @@ export function Timeline(element, data = {}) {
 	console.log("timeline", this);
 	this._element = $(element);
 	this.loadData(data);
-
 }
 
 _.mixin(Timeline.prototype, Emitter);
@@ -35,14 +34,18 @@ Timeline.prototype.loadData = function(data = {}) {
 	//
 	// json view
 
-	this.jsonRactive = new Ractive({
-		el: '#json-container',
-		template: `{{JSON.stringify(data, null, " ")}}`,
+	this.eventRactive = new Ractive({
 		data: this.ractiveData,
 		magic: true
 	});
 	// force jsonRactive to notice changes to keyframes, even though they are not directly accessed in template
-	this.jsonObserver = this.jsonRactive.observe('data.tracks.*.keyFrames.*.*', () => {});
+	this.eventObserver = this.eventRactive.observe('data.tracks.*.keyFrames.*.*', () => {
+		if (this.ractiveData.activeKeyFrame && this.ractiveData.activeKeyFrame.track && this.ractiveData.activeKeyFrame.track._draw) {
+			this.ractiveData.activeKeyFrame.track._draw();
+		}
+
+		this.trigger("dataChanged", this.data);
+	});
 
 	//
 	// inspector view

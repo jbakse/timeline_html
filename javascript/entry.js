@@ -38,7 +38,7 @@ function injectTestData(data) {
 			tData.keyFrames.push({
 				time: Math.random() * data.duration,
 				value: Math.random() * 10,
-				tween: Math.random() < .25 ? "linear" : "none"
+				tween: Math.random() < 0.25 ? "linear" : "none"
 			});
 		}
 		data.tracks.push(tData);
@@ -56,7 +56,9 @@ function main() {
 
 	$(".timeline").each(function AttachTimeline() {
 		let t = new Timeline(this, data);
-		t.on("test", (a,b,c)=>console.log("test",a,b,c));
+		t.on("dataChanged", (data)=> {
+			$("#json-container").text(JSON.stringify(data, null, " "));
+		});
 	});
 }
 $(main);
