@@ -1,5 +1,7 @@
 "use strict";
+
 import { map, roundTo } from "./utility.js";
+import { Emitter } from "./emitter.js";
 
 ////////////////////////////////////////////////////////////////////
 // Timeline
@@ -7,10 +9,13 @@ import { map, roundTo } from "./utility.js";
 
 export function Timeline(element, data = {}) {
 	console.log("Construct Timeline");
+	console.log("timeline", this);
 	this._element = $(element);
 	this.loadData(data);
+
 }
 
+_.mixin(Timeline.prototype, Emitter);
 
 Timeline.prototype.loadData = function(data = {}) {
 	this.data = _.defaults(data, {
@@ -101,7 +106,7 @@ Timeline.prototype.loadData = function(data = {}) {
 	//
 	// syncronize scrolling
 	
-	this._element.find(".track-scroll").scroll((e) => {
+	this._element.find(".track-scroll").scroll( () => {
 		this._element.find(".track-labels").scrollTop(this._element.find(".track-scroll").scrollTop());
 		this._element.find(".ruler-scroll").scrollLeft(this._element.find(".track-scroll").scrollLeft());
 	});
@@ -127,6 +132,9 @@ Timeline.prototype._draw = function() {
 	this._playbackHead._draw();
 	_.invoke(this._tracks, "_draw");
 };
+
+
+
 
 
 
@@ -191,7 +199,7 @@ Track.trackValueAtTime = function(track, time) {
 	}
 	else {
 		// time between keyframes, interpolate
-		if (track.keyFrames[leftIndex].tween == "linear") {
+		if (track.keyFrames[leftIndex].tween === "linear") {
 			value = map(time,
 				track.keyFrames[leftIndex].time, track.keyFrames[rightIndex].time,
 				track.keyFrames[leftIndex].value, track.keyFrames[rightIndex].value);
@@ -295,7 +303,7 @@ Marker.prototype._enableDrag = function() {
 };
 
 Marker.prototype._dragHandler = function(e, ui) {
-	this.data.time = roundTo(ui.position.left / this.timeline.ractiveData.scale, 0.01);
+	this.data.time = roundTo(ui.position.left / this.timeline.ractiveData.scale, this.timeline.data.grid);
 };
 
 Marker.prototype._draw = function() {
@@ -345,7 +353,7 @@ KeyFrame.prototype.loadOptions = function(options = {}) {
 
 KeyFrame.prototype._dragHandler = function(e, ui) {
 	// convert postion to time and snap to grid
-	this.data.time = roundTo(ui.position.left / this.timeline.ractiveData.scale, 0.1);
+	this.data.time = roundTo(ui.position.left / this.timeline.ractiveData.scale, this.timeline.data.grid);
 	ui.position.left = this.data.time * this.timeline.ractiveData.scale;
 
 	this.track.sort();
@@ -409,7 +417,11 @@ PlaybackHead.prototype.loadOptions = function(options = {}) {
 
 
 PlaybackHead.prototype._dragHandler = function(e, ui) {
-	this.timeline.ractiveData.time = ui.position.left / this.timeline.ractiveData.scale;
+	this.timeline.ractiveData.time = roundTo(ui.position.left / this.timeline.ractiveData.scale, this.timeline.data.grid);
+	ui.position.left = this.timeline.ractiveData.time * this.timeline.ractiveData.scale;
+
+	//this.timeline.ractiveData.time = ui.position.left / this.timeline.ractiveData.scale;
+	this._element.css("left", this.timeline.ractiveData.time * this.timeline.ractiveData.scale + "px");
 	this._lineElement.css("left", this.timeline.ractiveData.time * this.timeline.ractiveData.scale + "px");
 };
 
