@@ -3,27 +3,75 @@
 require('../styles/style.scss');
 import { Timeline } from "./timeline.js";
 
+let timeHandle = {
+	data: {}
+}
+
+
+function main() {
+	console.clear();
+	console.log("Hello, Timeline!");
+
+	// data = injectTestData(data);
+
+	$(".timeline").each(function AttachTimeline() {
+		let t = new Timeline(this, data);
+
+		t.on("datachanged", (data) => {
+			$("#data-json").text(JSON.stringify(data, null, " "));
+		});
+
+		t.on("timechanged", (data) => {
+			console.log("timechanged");
+			$("#time-json").text(JSON.stringify(data, null, " "));
+			timeHandle.data = data;
+		});
+
+
+		let ballRactive = new Ractive({
+			data: timeHandle,
+			magic: true,
+			el: 'stage',
+			template: `<div class="ball" style="
+				left: {{data.x}}px;
+				top: {{data.y}}px;
+
+
+			"></div>`
+		});
+	});
+}
+
+$(main);
+
+
 
 let data = {
 	duration: 15,
 	grid: 0.1,
 	tracks: [{
-		name: "position_x",
+		name: "x",
 		keyFrames: [{
 			time: 1,
-			value: 10
-		}, {
-			time: 3,
-			value: 10
+			value: 100
 		}, {
 			time: 2,
-			value: 20
+			value: 200
+		}, {
+			time: 3,
+			value: 300
 		}]
 	}, {
-		name: "rotation",
+		name: "y",
 		keyFrames: [{
 			time: 1,
-			value: 12.4433
+			value: 300
+		}, {
+			time: 2,
+			value: 100
+		}, {
+			time: 3,
+			value: 300
 		}]
 	}]
 };
@@ -48,29 +96,6 @@ function injectTestData(data) {
 
 
 
-function main() {
-	console.clear();
-	console.log("Hello, Timeline!");
-
-	data = injectTestData(data);
-
-	$(".timeline").each(function AttachTimeline() {
-		let t = new Timeline(this, data);
-		t.on("dataChanged", (data)=> {
-			$("#json-container").text(JSON.stringify(data, null, " "));
-		});
-	});
-}
-$(main);
-
 // data.dataChanged = function(data) {
 // 	$(".json-view").text(JSON.stringify(data, null, ' '));
 // };
-
-
-
-
-
-
-
-

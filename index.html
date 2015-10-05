@@ -24,14 +24,18 @@
 
 	</div>
 
+	<div id="stage"></div>
 
-	<div id="json-container"></div>
+
+
+	<div id="data-json"></div>
+	<div id="time-json"></div>
 
 	<script id='track-labels-template' type='text/ractive'>
 		{{#each data.tracks}}
 		<div class="track-label">
 			<span class="name">{{name}}</span>
-			<span class="value">{{trackValueAtTime(this, time)}}</span>
+			<span class="value">{{roundTo(trackValueAtTime(this, time), .01)}}</span>
 		</div>
 		{{/each}}
 	</script>

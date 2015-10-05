@@ -8,6 +8,28 @@ $timeline-max-height: 300px;
 $ruler-height: 40px;
 $label-width: 300px;
 
+
+#stage {
+	margin: 30px;
+	background: rgba(255, 255, 255, .1);
+	height: 300px;
+	position: relative;
+}
+
+.ball {
+	width: 30px;
+	height: 30px;
+	position: absolute;
+	left: 0;
+	top: 0;
+	margin-left: -15px;
+	margin-top: -15px;
+	background: rgba(255, 255, 255, .4);
+	border: 5px solid rgba(255, 255, 255, .5);
+	border-radius: 50%;
+	box-sizing: border-box;
+}
+
 body
 {
 	margin: 0;
@@ -54,12 +76,24 @@ body
 }
 
 
-
-#json-container
+#data-json
 {
 	color: white;
 	margin: 30px;
 	white-space: pre;
+	width: 400px;
+	border: 1px solid red;
+	float: left;
+}
+
+#time-json
+{
+	color: white;
+	margin: 30px;
+	white-space: pre;
+	width: 400px;
+	border: 1px solid blue;
+	float: left;
 }
 
 .track-legend

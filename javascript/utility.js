@@ -1,3 +1,5 @@
+"use strict";
+
 export var lerp = function(start, stop, amt) {
 	return amt * (stop - start) + start;
 };

@@ -28,7 +28,8 @@ Timeline.prototype.loadData = function(data = {}) {
 		time: 0,
 		scale: 50,
 		activeKeyFrame: undefined,
-		trackValueAtTime: Track.trackValueAtTime
+		trackValueAtTime: Track.trackValueAtTime,
+		roundTo: roundTo
 	};
 
 	//
@@ -44,7 +45,12 @@ Timeline.prototype.loadData = function(data = {}) {
 			this.ractiveData.activeKeyFrame.track._draw();
 		}
 
-		this.trigger("dataChanged", this.data);
+		this.trigger("datachanged", this.data);
+	});
+
+
+	this.eventObserver = this.eventRactive.observe('time', () => {
+		this.trigger("timechanged", this.timeData(this.ractiveData.time));
 	});
 
 	//
@@ -118,6 +124,16 @@ Timeline.prototype.loadData = function(data = {}) {
 };
 
 
+Timeline.prototype.timeData = function(time) {
+	time = time || this.ractiveData.time;
+	let d = {};
+	
+	_.each(this.data.tracks, (t)=>{
+		d[t.name] = Track.trackValueAtTime(t, time);
+	});
+
+	return d;
+};
 
 Timeline.prototype.setScale = function(scale) {
 	this.ractiveData.scale = scale;
@@ -211,7 +227,7 @@ Track.trackValueAtTime = function(track, time) {
 		} 
 	}
 
-	return roundTo(value, 0.01);
+	return value;
 };
 
 
