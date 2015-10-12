@@ -1,6 +1,6 @@
 @import url(https://fonts.googleapis.com/css?family=Source+Code+Pro);
 
-$track-height: 20px;
+$track-height: 26px;
 $track-margin: 2px;
 $key-frame-width: 8px;
 $scrollbar-width: 15px;
@@ -206,6 +206,19 @@ body
 	width: 80px;
 }
 
+.track-label .value.color
+{
+	// border: 1px solid red;
+	float: right;
+	margin-right: 10px;
+	width: 80px;
+	border: 1px solid black;
+	box-sizing: border-box;
+	height: 18px;
+	margin-top: 4px;
+	background: #CCC;
+}
+
 .track 
 {
 	height:$track-height;
@@ -329,4 +342,19 @@ input[type=range]:focus {
 }
 
 input[type=range]:focus::-webkit-slider-runnable-track {
+}
+
+select {
+	-webkit-appearance: none;
+	background-color: black;
+	color: #AAA;
+	border: 1px solid #666;
+	padding: 3px;
+	font-size: 14px;
+	border-radius:0;
+}
+select:focus
+{
+	border: 1px solid #99B;
+	outline: none;
 }

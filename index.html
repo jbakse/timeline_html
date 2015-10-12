@@ -34,8 +34,26 @@
 	<script id='track-labels-template' type='text/ractive'>
 		{{#each data.tracks}}
 		<div class="track-label">
+			
+
+			<select value='{{type}}'>
+				{{#each types}}
+					<option>{{this}}</option>
+				{{/each}}
+			</select>
+
+
 			<span class="name">{{name}}</span>
-			<span class="value">{{roundTo(trackValueAtTime(this, time), .01)}}</span>
+
+			{{#if type === "number"}} 
+				<span class="value">{{roundTo(trackValueAtTime(this, time), .01)}}</span>
+			{{/if}}
+
+			{{#if type === "color"}} 
+				<span class="value color" style="background:rgba({{roundTo(trackValueAtTime(this, time)[0], 1)}},{{roundTo(trackValueAtTime(this, time)[1], 1)}},{{roundTo(trackValueAtTime(this, time)[2], 1)}},{{roundTo(trackValueAtTime(this, time)[3], 1)}});"></span>
+			{{/if}}
+
+			
 		</div>
 		{{/each}}
 	</script>
@@ -51,7 +69,7 @@
 		<label>tween</label>
 		<select name="tween" value="{{activeKeyFrame.data.tween}}">
 			<option value="none">None</option> 
-  			<option value="linear">Linear</option>
+			<option value="linear">Linear</option>
 		</select>
 	</script>
 

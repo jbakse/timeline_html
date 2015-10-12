@@ -1,0 +1,748 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"game",
+				"gameOverScreen"
+			],
+			[
+				"p",
+				"position"
+			],
+			[
+				"Game",
+				"GameOverScreen"
+			],
+			[
+				"loadT",
+				"loadTileLayer"
+			],
+			[
+				"im",
+				"imageWidth"
+			],
+			[
+				"tile",
+				"tileSet"
+			],
+			[
+				"til",
+				"tileWidth"
+			],
+			[
+				"ima",
+				"imageWidth"
+			],
+			[
+				"proc",
+				"processMaterial"
+			],
+			[
+				"Mod",
+				"ModelLoader"
+			],
+			[
+				"ma",
+				"materials"
+			],
+			[
+				"loaded",
+				"loadedModels"
+			],
+			[
+				"fil",
+				"fileName"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "javascript/entry.js",
+			"settings":
+			{
+				"buffer_size": 1784,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "javascript/timeline.js",
+			"settings":
+			{
+				"buffer_size": 11789,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 400.0,
+		"last_filter": "wr",
+		"selected_items":
+		[
+			[
+				"wr",
+				"Word Wrap: Toggle"
+			],
+			[
+				"livereload",
+				"LiveReload: Enable/disable plug-ins"
+			],
+			[
+				"tab",
+				"Indentation: Convert to Tabs"
+			],
+			[
+				"syntaxcoff",
+				"Set Syntax: CoffeeScript"
+			],
+			[
+				"synco",
+				"Set Syntax: CoffeeScript"
+			],
+			[
+				"ena",
+				"Package Control: Enable Package"
+			],
+			[
+				"ENA",
+				"Package Control: Enable Package"
+			],
+			[
+				"ins",
+				"Package Control: Install Package"
+			],
+			[
+				"preview",
+				"Markdown Preview: Python Markdown: Preview in Browser"
+			],
+			[
+				"gfm",
+				"Markdown Preview: Github Flavored Markdown: Preview in Browser"
+			],
+			[
+				"marpr",
+				"Markdown Preview: Github Flavored Markdown: Preview in Browser"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"listp",
+				"Package Control: List Packages"
+			],
+			[
+				"list",
+				"Package Control: List Packages"
+			],
+			[
+				"in",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 601.0
+	},
+	"console":
+	{
+		"height": 174.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = '7183a2d3e96f11eeadd761d777e62404' + 'e330c659d4bb41d3bdf022e94cab3cd0'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://sublime.wbond.net/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/Users/jbakse/Documents/Projects/timeline_html"
+	],
+	"file_history":
+	[
+		"/Users/jbakse/Documents/Projects/pucd2035_f15/class_notes/content/week_5/index.md",
+		"/Users/jbakse/Documents/Projects/pucd2035_f15/private_notes/quiz/index.html",
+		"/Users/jbakse/Documents/Projects/pucd2035_f15/private_notes/quiz/sketch.js",
+		"/Users/jbakse/Documents/Projects/pucd2035_f15/class_notes/content/index.md",
+		"/Users/jbakse/Documents/Projects/pucd2035_f15/class_notes/content/week_6/index.md",
+		"/Users/jbakse/Documents/projects/shump/scripts/shump/CollisionObject.coffee",
+		"/Users/jbakse/Documents/projects/shump/assets/level_1.json",
+		"/Users/jbakse/Documents/projects/shump/scripts/shump/Weapons.coffee",
+		"/Users/jbakse/Documents/projects/shump/scripts/shump/Player.coffee",
+		"/Users/jbakse/Documents/projects/shump/scripts/shump/Score.coffee",
+		"/Users/jbakse/Documents/projects/shump/scripts/shump/shump.coffee",
+		"/Users/jbakse/Documents/projects/shump/scripts/shump/Input.coffee",
+		"/Users/jbakse/Documents/projects/shump/scripts/shump/World.coffee",
+		"/Users/jbakse/Documents/projects/shump/notes/todo.todo",
+		"/Users/jbakse/Documents/projects/shump/scripts/shump/Particle.coffee",
+		"/Users/jbakse/Documents/projects/shump/shump.sublime-project",
+		"/Users/jbakse/Documents/projects/shump/styles/main.css",
+		"/Users/jbakse/Documents/projects/shump/scripts/shump/GameObject.coffee",
+		"/Users/jbakse/Documents/projects/shump/scripts/shump/Enemies.coffee",
+		"/Users/jbakse/Library/Application Support/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/Users/jbakse/Library/Application Support/Sublime Text 3/Packages/Default/Preferences.sublime-settings",
+		"/Users/jbakse/Documents/projects/shump/index.html",
+		"/Users/jbakse/Documents/projects/shump/scripts/main.coffee",
+		"/Users/jbakse/Documents/projects/shump/lib/THREEx.FullScreen.js",
+		"/Users/jbakse/Documents/projects/shump/scripts/shump/Base.coffee",
+		"/Users/jbakse/Documents/projects/shump/production/grid_cube.blend",
+		"/Users/jbakse/Documents/projects/shump/package.json",
+		"/Users/jbakse/Documents/projects/shump/scripts/shump/ModelLoader.coffee",
+		"/Users/jbakse/Documents/projects/shump/notes/snippets.coffee",
+		"/Users/jbakse/Documents/projects/shump/assets/test/malard.js",
+		"/Users/jbakse/Documents/projects/shump/production/malard.blend",
+		"/Users/jbakse/Documents/projects/shump/scripts/shump/Sound.coffee",
+		"/Users/jbakse/Documents/projects/shump/lib/three.js",
+		"/Users/jbakse/Documents/projects/shump/assets/music.wav",
+		"/Users/jbakse/Documents/projects/shump/scripts/app.js",
+		"/Users/jbakse/Documents/projects/shump/assets/explosion.wav",
+		"/Users/jbakse/Documents/projects/shump/scripts/util.coffee",
+		"/Users/jbakse/Documents/projects/shump/scripts/shump/shump_core.coffee",
+		"/Users/jbakse/Documents/projects/shump/gulpfile.js",
+		"/Users/jbakse/Documents/projects/shump/scripts/shump.coffee",
+		"/Users/jbakse/Documents/projects/shump/scripts/shump_core.coffee",
+		"/Users/jbakse/Documents/projects/shump/scripts/main.js.map",
+		"/Users/jbakse/Documents/projects/shump/assets/grid_cube.js",
+		"/Users/jbakse/Documents/projects/shump/node_modules/three/examples/js/exporters/HTMLExporter.js",
+		"/Users/jbakse/Documents/projects/shump/node_modules/gulp-less/node_modules/less/node_modules/clean-css/lib/colors/hsl-to-hex.js",
+		"/Users/jbakse/Documents/projects/shump/node_modules/gulp/node_modules/semver/head.js",
+		"/Users/jbakse/Dropbox/Justin_BNS/_projects/Data_Design_Code/reveal/index.php",
+		"/Users/jbakse/Dropbox/Justin_BNS/_projects/Data_Design_Code/reveal/decks/realtime.md",
+		"/Users/jbakse/Dropbox/Justin_BNS/_projects/Data_Design_Code/week_8/realtime_lecture.md",
+		"/Users/jbakse/Library/Application Support/Sublime Text 3/Packages/MarkdownEditing/Markdown.sublime-settings",
+		"/Users/jbakse/Library/Application Support/Sublime Text 3/Packages/User/Markdown.sublime-settings",
+		"/Users/jbakse/Documents/projects/shump/node_modules/gulp/node_modules/chalk/node_modules/ansi-styles/ansi-styles.js",
+		"/Users/jbakse/Documents/projects/shump/node_modules/gulp-watch/test/streammode-test.js",
+		"/Users/jbakse/Documents/projects/shump/assets/ship.js",
+		"/Users/jbakse/Documents/projects/shump/node_modules/three/examples/js/MarchingCubes.js",
+		"/Users/jbakse/Documents/projects/shump/node_modules/gulp-less/node_modules/less/tmp/browser/test-runner-main.html",
+		"/Users/jbakse/Documents/projects/shump/node_modules/gulp-less/node_modules/less/test/css/mixins-args.css"
+	],
+	"find":
+	{
+		"height": 30.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"name",
+			"_",
+			"> ",
+			"processing",
+			"test",
+			"40",
+			"300",
+			"10",
+			"100",
+			"200",
+			"=>",
+			"position.x",
+			"camera",
+			" @player1",
+			"player",
+			"input",
+			"Input",
+			".75",
+			"light",
+			"Bullet",
+			"_acti",
+			"			\n",
+			"_",
+			"active",
+			"colliders",
+			"active",
+			"dead",
+			"data",
+			"loadTileLayer",
+			"camera",
+			"on",
+			"log",
+			"camera",
+			"tileObject",
+			"root",
+			"scale",
+			"log",
+			"console.log",
+			"Width",
+			"TileObject",
+			"tileObject",
+			"Data",
+			"data",
+			"Data",
+			"data",
+			"tileAsset",
+			"data.layers[0]",
+			"=\n",
+			"data.layers[0]",
+			"d",
+			"gid",
+			"tileSet",
+			"tileset",
+			"test_tiles",
+			"4",
+			"bars",
+			"shumpAspect",
+			"$(window).height()",
+			"$(window).width()",
+			"window",
+			"screen.width",
+			"screen.height",
+			"shump",
+			"world",
+			"angle",
+			"@",
+			"PI",
+			"push",
+			"@",
+			"uv",
+			"processQuad",
+			"processCamera",
+			"processScene",
+			"background_",
+			"then",
+			"play",
+			"explosion",
+			"  ",
+			";",
+			");\n                 ",
+			"                           ",
+			"                          ",
+			"                         ",
+			"                        ",
+			"                       ",
+			"                      ",
+			"                     ",
+			"                    ",
+			"//",
+			"world",
+			"console",
+			"util",
+			"Particle",
+			"Player",
+			"CollisionObject",
+			"Particle",
+			"lastEn",
+			"enemy",
+			"bull",
+			"ModelLoa",
+			"lastFire",
+			"bullet",
+			"slice",
+			"bulle",
+			"modelLoader",
+			"load",
+			"console.log",
+			"Player",
+			"exportes",
+			"Base",
+			"class",
+			"GameObject",
+			"class",
+			"Base",
+			"after",
+			"input",
+			"world",
+			"wkr,d",
+			"x",
+			"Input",
+			"modelLoader",
+			"shump.coffee",
+			"ship",
+			"  ",
+			"<script",
+			">@jbakse</a>) on <a href='http://codepen.io'>CodePen</a>.</p>\n",
+			"-----",
+			"\n-----\n"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "javascript/entry.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1784,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1445,
+								1445
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"auto_complete": false,
+							"bh_regions":
+							[
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content"
+							],
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "javascript/timeline.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 11789,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								298,
+								298
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content"
+							],
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": -0.0,
+						"translation.y": 19.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 30.0
+	},
+	"input":
+	{
+		"height": 40.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "timeline_html.sublime-project",
+	"replace":
+	{
+		"height": 56.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"coll",
+				"scripts/shump/CollisionObject.coffee"
+			],
+			[
+				"scor",
+				"scripts/shump/Score.coffee"
+			],
+			[
+				"inpu",
+				"scripts/shump/Input.coffee"
+			],
+			[
+				"play",
+				"scripts/shump/Player.coffee"
+			],
+			[
+				"weap",
+				"scripts/shump/Weapons.coffee"
+			],
+			[
+				"shum",
+				"scripts/shump/shump.coffee"
+			],
+			[
+				"worl",
+				"scripts/shump/World.coffee"
+			],
+			[
+				"todo",
+				"notes/todo.todo"
+			],
+			[
+				"wor",
+				"scripts/shump/World.coffee"
+			],
+			[
+				"par",
+				"scripts/shump/Particle.coffee"
+			],
+			[
+				"pla",
+				"scripts/shump/Player.coffee"
+			],
+			[
+				"enem",
+				"scripts/shump/Enemies.coffee"
+			],
+			[
+				"tod",
+				"notes/todo.todo"
+			],
+			[
+				"to",
+				"notes/todo.todo"
+			],
+			[
+				"ene",
+				"scripts/shump/Enemies.coffee"
+			],
+			[
+				"wea",
+				"scripts/shump/Weapons.coffee"
+			],
+			[
+				"model",
+				"scripts/shump/ModelLoader.coffee"
+			],
+			[
+				"en",
+				"scripts/shump/Enemies.coffee"
+			],
+			[
+				"toto",
+				"notes/todo.todo"
+			],
+			[
+				"gu",
+				"gulpfile.js"
+			],
+			[
+				"stylma",
+				"styles/main.css"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 71.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"sound",
+				"loadSound"
+			]
+		],
+		"width": 378.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": false,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 251.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

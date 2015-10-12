@@ -2,6 +2,16 @@
 
 +---- Organize the ractive data supply keep document data on "data", keep other things like current time, active selections etc on root
 
+
+-----	The track labels should probably get their value from the same interpolated data structure provided to the outside world.
+
+-----	Add support for type plug-ins, and use that instead of the current autodetect. do have a fallback for an unmixed mode (where left value is picked if it don't know what to do).
+
+
+-----	Add inspector for color!
+
+----- time changed should be called if a value changes (via inspector say). maybe timeChanged isn't a good name for the event? maybe "update"?
+
 ---- Should we just bring the loadData, loadOpts under the constructor. Maybe? Maybe Not? Downside is that subclasses might have to reimplement entire constructor? Might work best if the defaults are stored as obj on prototype?
 
 Code Review
@@ -32,3 +42,4 @@ the .options member holds the initialization configuration options, instances sh
 
 the .data member holds a reference to the part of the document the instance is controlling
 the options are (e.g. track instance[x]'s .data is  data.track[x])
+

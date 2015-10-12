@@ -6,11 +6,86 @@ import { Emitter } from "./emitter.js";
 ////////////////////////////////////////////////////////////////////
 // Timeline
 
+let mixValues = function(fromValue, toValue, mix) {
+	if (typeof fromValue !== typeof toValue) {
+		// can't mix
+		return fromValue;
+	}
+
+	
+
+	if (typeof fromValue === "number") {
+		return fromValue + (toValue-fromValue) * mix;
+	}
+
+	if (Array.isArray(fromValue) && Array.isArray(toValue) && fromValue.length === toValue.length) {
+		let mixArray = [];
+		for (let i = 0; i < fromValue.length; i++) {
+			mixArray[i] = mixValues(fromValue[i], toValue[i], mix);
+		}
+		return mixArray;
+	}
+
+	// can't mix
+	return fromValue;
+
+};
+
+
+let types = {
+	"number": {
+		"mixValues": function(fromValue, toValue, mix) {
+			return fromValue + (toValue-fromValue) * mix;
+		}, 
+		"valueTemplate": `<span class="value">{{roundTo(trackValueAtTime(this, time), .01)}}</span>`,
+		"inspectorTemplate": `number
+			<label>time</label>
+			<input name="time" type="number" value="{{activeKeyFrame.data.time}}">
+
+			<label>value</label>
+			<input name="value" type="number" value="{{activeKeyFrame.data.value}}">
+
+			<label>tween</label>
+			<select name="tween" value="{{activeKeyFrame.data.tween}}">
+				<option value="none">None</option> 
+				<option value="linear">Linear</option>
+			</select>`
+	},
+
+	"color": {
+		"mixValues": function(fromValue, toValue, mix) {
+			let mixedColor = [];
+			for (let i = 0; i < fromValue.length; i++) {
+				mixedColor[i] = fromValue[i] + (toValue[i]-fromValue[i]) * mix;
+			}
+			return mixedColor;
+		}, 
+		"valueTemplate": `
+			<span class="value color" style="background:rgba({{roundTo(trackValueAtTime(this, time)[0], 1)}},{{roundTo(trackValueAtTime(this, time)[1], 1)}},{{roundTo(trackValueAtTime(this, time)[2], 1)}},{{roundTo(trackValueAtTime(this, time)[3], 1)}});"></span>
+		`,
+		"inspectorTemplate": `color
+			<label>time</label>
+			<input name="time" type="number" value="{{activeKeyFrame.data.time}}">
+
+			<label>value</label>
+			<input name="red" type="number" value="{{activeKeyFrame.data.value[0]}}">
+			<input name="green" type="number" value="{{activeKeyFrame.data.value[1]}}">
+			<input name="blue" type="number" value="{{activeKeyFrame.data.value[2]}}">
+
+			<label>tween</label>
+			<select name="tween" value="{{activeKeyFrame.data.tween}}">
+				<option value="none">None</option> 
+				<option value="linear">Linear</option>
+			</select>`
+	}
+};
+
 
 export function Timeline(element, data = {}) {
 	console.log("Construct Timeline");
 	console.log("timeline", this);
 	this._element = $(element);
+	this.types = types;
 	this.loadData(data);
 }
 
@@ -29,7 +104,8 @@ Timeline.prototype.loadData = function(data = {}) {
 		scale: 50,
 		activeKeyFrame: undefined,
 		trackValueAtTime: Track.trackValueAtTime,
-		roundTo: roundTo
+		roundTo: roundTo,
+		types: ["number", "color"]
 	};
 
 	//
@@ -58,7 +134,8 @@ Timeline.prototype.loadData = function(data = {}) {
 
 	this.inspectorRactive = new Ractive({
 		el: this._element.find('.inspector'),
-		template: '#inspector-template',
+		// template: '#inspector-template',
+		template: this.types.number.inspectorTemplate,
 		data: this.ractiveData,
 		magic: true
 	});
@@ -142,6 +219,25 @@ Timeline.prototype.setScale = function(scale) {
 
 Timeline.prototype.setActiveKeyFrame = function(keyFrame) {
 	this.ractiveData.activeKeyFrame = keyFrame;
+	console.log(keyFrame.track.data.type);
+	console.log(this.inspectorRactive);
+
+	this.inspectorRactive.teardown();
+	this.inspectorRactive = new Ractive({
+		el: this._element.find('.inspector'),
+		// template: '#inspector-template',
+		template: this.types[keyFrame.track.data.type].inspectorTemplate,
+		data: this.ractiveData,
+		magic: true
+	});
+
+	this.inspectorObserver = this.inspectorRactive.observe('activeKeyFrame.*', () => {
+		if (this.ractiveData.activeKeyFrame._draw) {
+			this.ractiveData.activeKeyFrame._draw();
+		}
+	});
+
+
 	this._element.find(".key-frame").removeClass("active");
 	keyFrame._element.addClass("active");
 };
@@ -209,26 +305,31 @@ Track.trackValueAtTime = function(track, time) {
 	leftIndex = rightIndex - 1;
 
 	if (rightIndex === 0) {
-		//first keyframe after time
+		//first keyframe is after current time
 		value = track.keyFrames[0].value;
 	}
 	else if (rightIndex === track.keyFrames.length) {
-		//last keyframe is before time
+		//last keyframe is before current time
 		value = track.keyFrames[track.keyFrames.length - 1].value;
 	}
 	else {
 		// time between keyframes, interpolate
 		if (track.keyFrames[leftIndex].tween === "linear") {
-			value = map(time,
+			let mix = map(time,
 				track.keyFrames[leftIndex].time, track.keyFrames[rightIndex].time,
-				track.keyFrames[leftIndex].value, track.keyFrames[rightIndex].value);
-		} else {
+				0, 1);
+			value = mixValues(track.keyFrames[leftIndex].value, track.keyFrames[rightIndex].value, mix);
+
+		} else if (track.keyFrames[leftIndex].tween === "none") {
 			value = track.keyFrames[leftIndex].value;
 		} 
 	}
 
 	return value;
 };
+
+
+
 
 
 
